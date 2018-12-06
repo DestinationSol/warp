@@ -1,0 +1,11 @@
+{
+    "id" : "warp",
+    "version" : "0.1.0",
+    "displayName" : "warp Faction",
+    "description" : "Content related to warp Faction.",
+    "dependencies" :  [
+        {
+            "id" : "core"
+        }
+    ]
+}

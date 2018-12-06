@@ -1,0 +1,84 @@
+{
+  "size": 1.0,
+  "maxLife": 38,
+  "type": "std",
+  "price": 400,
+  "hirePrice": 700,
+  "ability": {
+    "type": "sloMo",
+    "factor": 2.5,
+    "rechargeTime": 40
+  },
+  "displayName": "Explorer",
+  "engine": "core:imperialEngine",
+  "gunSlots": [
+    {
+      "position": "0.5 0.2",
+      "isUnderneathHull": true,
+      "allowsRotation": true
+    },
+    {
+      "position": "0.5 0.8",
+      "isUnderneathHull": true,
+      "allowsRotation": true
+    }
+  ],
+  "rigidBody": {
+    "origin": {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "polygons": [ ],
+    "circles": [
+      {
+        "cx": 0.507500171661377,
+        "cy": 0.5062496066093445,
+        "r": 0.5004311203956604
+      }
+    ],
+    "shapes": [
+      {
+        "type": "CIRCLE",
+        "vertices": [
+          {
+            "x": 0.507500171661377,
+            "y": 0.5062496066093445
+          },
+          {
+            "x": 0.8700002431869507,
+            "y": 0.161249577999115
+          }
+        ]
+      }
+    ]
+  },
+  "particleEmitters": [
+    {
+      "position": "0.5 0.5",
+      "trigger": "engine",
+      "hasLight": false,
+      "particle": {
+        "effectFile": "core:techieEngine",
+        "size": 0.5,
+        "tex": "core:unShield",
+        "tint": "hsb 140 20 65"
+      },
+      "workSounds": [
+        "warp:hoverThrust"
+      ]
+    },
+    {
+      "position": "0.5 0.5",
+      "trigger": "engine",
+      "hasLight": false,
+      "particle": {
+        "effectFile": "core:forceBeacon",
+        "size": 0.5,
+        "tex": "core:unShield",
+        "tint": "hsb 140 20 65"
+      },
+      "workSounds": [
+      ]
+    }
+  ]
+}
