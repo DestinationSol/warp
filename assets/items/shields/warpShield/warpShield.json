@@ -1,0 +1,13 @@
+{
+    "maxLife": 1.0,
+    "idleTime": 2.8,
+    "regenSpd": 1.0,
+    "bulletDmgFactor": 0.0,
+    "energyDmgFactor": 0.0,
+    "explosionDmgFactor": 0.0,
+    "price": -1,
+    "displayName": "Warp Shield",
+    "absorbSound": "core:shield1Absorb1",
+    "absorbSoundPitch": 0.8,
+    "regenSound": "core:shield1Regen"
+}

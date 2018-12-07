@@ -1,7 +1,7 @@
 {
     "Warp Explorer": {
 	    "hull": "warp:explorer",
-	    "items": "3*rep core:lightArmor-1 core:smallShield-1 core:blaster-1 core:blaster-2",
-	    "money": 2000
+	    "items": "3*rep core:lightArmor-1 core:smallShield-1 core:waveGun-1 core:waveGun-2",
+	    "money": 200
     },
 }
