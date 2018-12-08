@@ -1,25 +1,19 @@
 package org.destinationsol.warp.abilities;
 
-import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.game.AbilityCommonConfig;
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.drawables.DrawableLevel;
-import org.destinationsol.game.item.ItemConfig;
 import org.destinationsol.game.item.ItemManager;
 import org.destinationsol.game.item.Shield;
 import org.destinationsol.game.item.SolItem;
-import org.destinationsol.game.particle.DSParticleEmitter;
 import org.destinationsol.game.ship.AbilityConfig;
 import org.destinationsol.game.ship.ShipAbility;
 import org.destinationsol.game.ship.SolShip;
 import org.json.JSONObject;
 
-import java.util.List;
-
 public class WarpShieldAbility implements ShipAbility {
     private final WarpShieldAbilityConfig config;
     private Shield originalShield;
-    private float shieldTimer = 0.0f;
+    private float shieldTimer;
     private boolean warpShieldPresent;
 
     public WarpShieldAbility(WarpShieldAbilityConfig config) {
@@ -105,7 +99,7 @@ public class WarpShieldAbility implements ShipAbility {
         }
 
         public static AbilityConfig load(JSONObject abNode, ItemManager itemManager, AbilityCommonConfig cc) {
-            float rechargeTime = (float) abNode.getDouble("rechargeTime");
+            float rechargeTime = abNode.getFloat("rechargeTime");
             float shieldDuration = abNode.getFloat("shieldDuration");
             String warpShieldName = abNode.getString("shield");
             itemManager.parseItems(warpShieldName);

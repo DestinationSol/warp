@@ -8,4 +8,13 @@
         },
         "activatedSound": "core:sloMoActivated"
     },
+    "PlanetTunnelAbility": {
+        "effect": {
+            "effectFile": "core:areaShipAbility",
+            "tex": "core:sloMo",
+            "tint": "fire",
+            "size": 1
+        },
+        "activatedSound": "core:sloMoActivated"
+    }
 }

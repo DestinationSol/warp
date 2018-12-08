@@ -4,4 +4,9 @@
 	    "items": "3*rep core:lightArmor-1 core:smallShield-1 core:waveGun-1 core:waveGun-2",
 	    "money": 200
     },
+    "Warp Endeavour": {
+	    "hull": "warp:endeavour",
+	    "items": "3*rep core:lightArmor-1 core:smallShield-1 warp:distortionGun-1 warp:distortionGun-2",
+	    "money": 200
+    }
 }

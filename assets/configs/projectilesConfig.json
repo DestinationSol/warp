@@ -1,0 +1,16 @@
+{
+    "distortion": {
+        "dmg": 16,
+        "dmgType": "energy",
+        "spdLen": 1,
+        "physSize": 1.0,
+        "acceleration": 1,
+
+        "tex": "warp:distortion",
+        "texSz": 1.0,
+        "texOrig": "0 0",
+        "lightSz": 0,
+
+        "collisionSound": "core:rocketCollision"
+    }
+}

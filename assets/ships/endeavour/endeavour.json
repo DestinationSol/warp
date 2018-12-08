@@ -1,0 +1,173 @@
+{
+  "size": 0.75,
+  "maxLife": 38,
+  "type": "std",
+  "price": 400,
+  "hirePrice": 700,
+  "ability":
+  {
+    "type": "PlanetTunnelAbility",
+    "rechargeTime": 4
+  },
+  "displayName": "Endeavour",
+  "engine": "core:imperialEngine",
+  "gunSlots":
+  [
+    {
+      "position": "1.0 0.2",
+      "isUnderneathHull": false,
+      "allowsRotation": true
+    },
+    {
+      "position": "1.0 0.8",
+      "isUnderneathHull": false,
+      "allowsRotation": true
+    }
+  ],
+  "rigidBody":
+  {
+    "origin":
+    {
+      "x": 0.5,
+      "y": 0.5
+    },
+    "polygons":
+    [
+    ],
+    "circles":
+    [
+      {
+        "cx": 0.21999996900558472,
+        "cy": 0.78125,
+        "r": 0.22012783586978912
+      },
+      {
+        "cx": 0.7849999666213989,
+        "cy": 0.78125,
+        "r": 0.22001422941684723
+      },
+      {
+        "cx": 0.21999996900558472,
+        "cy": 0.2162500023841858,
+        "r": 0.22035479545593262
+      },
+      {
+        "cx": 0.7825000286102295,
+        "cy": 0.2162500023841858,
+        "r": 0.21841759979724884
+      },
+      {
+        "cx": 0.5074999928474426,
+        "cy": 0.49125000834465027,
+        "r": 0.13157694041728973
+      }
+    ],
+    "shapes":
+    [
+      {
+        "type": "CIRCLE",
+        "vertices":
+        [
+          {
+            "x": 0.21999996900558472,
+            "y": 0.78125
+          },
+          {
+            "x": 0.22749999165534973,
+            "y": 1.0012500286102295
+          }
+        ]
+      },
+      {
+        "type": "CIRCLE",
+        "vertices":
+        [
+          {
+            "x": 0.7849999666213989,
+            "y": 0.78125
+          },
+          {
+            "x": 0.7875000834465027,
+            "y": 1.0012500286102295
+          }
+        ]
+      },
+      {
+        "type": "CIRCLE",
+        "vertices":
+        [
+          {
+            "x": 0.21999996900558472,
+            "y": 0.2162500023841858
+          },
+          {
+            "x": 0.23249995708465576,
+            "y": 0.4362499713897705
+          }
+        ]
+      },
+      {
+        "type": "CIRCLE",
+        "vertices":
+        [
+          {
+            "x": 0.7825000286102295,
+            "y": 0.2162500023841858
+          },
+          {
+            "x": 0.8025000095367432,
+            "y": 0.4337500035762787
+          }
+        ]
+      },
+      {
+        "type": "CIRCLE",
+        "vertices":
+        [
+          {
+            "x": 0.5074999928474426,
+            "y": 0.49125000834465027
+          },
+          {
+            "x": 0.5399999618530273,
+            "y": 0.6187499761581421
+          }
+        ]
+      }
+    ]
+  },
+  "particleEmitters":
+  [
+    {
+      "position": "0.5 0.5",
+      "trigger": "engine",
+      "hasLight": false,
+      "particle":
+      {
+        "effectFile": "core:techieEngine",
+        "size": 0.5,
+        "tex": "core:unShield",
+        "tint": "hsb 140 20 65"
+      },
+      "workSounds":
+      [
+        "warp:hoverThrust"
+      ]
+    },
+    {
+      "position": "0.5 0.5",
+      "trigger": "engine",
+      "hasLight": false,
+      "particle":
+      {
+        "effectFile": "core:forceBeacon",
+        "size": 0.5,
+        "tex": "core:unShield",
+        "tint": "hsb 140 20 65"
+      },
+      "workSounds":
+      [
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+    "maxAngleVar": 360,
+    "angleVarDamp": 4,
+    "angleVarPerShot": 20,
+    "timeBetweenShots": 0.8,
+    "reloadTime": 2.0,
+    "price": 100,
+    "clipName": "warp:distortionClip",
+    "gunLength": 0.125,
+    "texLenPerc": 0.87,
+    "displayName": "Distortion Gun",
+    "lightOnShot": false,
+    "shootSounds": [
+        "warp:distortionShot"
+    ],
+    "reloadSounds": [
+        "warp:distortionReload"
+    ]
+}
