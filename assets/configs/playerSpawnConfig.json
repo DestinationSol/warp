@@ -8,5 +8,10 @@
 	    "hull": "warp:endeavour",
 	    "items": "3*rep core:lightArmor-1 core:smallShield-1 warp:distortionGun-1 warp:distortionGun-2",
 	    "money": 200
+    },
+    "Warp Quasar": {
+	    "hull": "warp:quasar",
+	    "items": "3*rep core:heavyArmor-1 core:advancedShield-1 warp:spaceDisruptorGun-1 warp:solarFusionGun-2",
+	    "money": 200
     }
 }

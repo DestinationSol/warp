@@ -14,7 +14,6 @@ public class WarpShieldAbility implements ShipAbility {
     private final WarpShieldAbilityConfig config;
     private Shield originalShield;
     private float shieldTimer;
-    private boolean warpShieldPresent;
 
     public WarpShieldAbility(WarpShieldAbilityConfig config) {
         this.config = config;
@@ -24,22 +23,30 @@ public class WarpShieldAbility implements ShipAbility {
     public boolean update(SolGame game, SolShip owner, boolean tryToUse) {
        if (tryToUse) {
            originalShield = owner.getShield();
-           if (!warpShieldPresent) {
-               owner.getItemContainer().add(config.warpShield);
-               warpShieldPresent = true;
-           }
-           owner.maybeEquip(game, config.warpShield, true);
            shieldTimer = config.shieldDuration;
            return true;
        }
 
        if (shieldTimer <= 0) {
-           if (warpShieldPresent) {
-               owner.getItemContainer().remove(config.warpShield);
-               warpShieldPresent = false;
-           }
+           owner.getItemContainer().remove(config.warpShield);
            owner.maybeEquip(game, originalShield, true);
            return false;
+       } else {
+           boolean warpShieldPresent = false;
+           for (int i = 0; i < owner.getItemContainer().groupCount(); i++) {
+               for (SolItem item : owner.getItemContainer().getGroup(i)) {
+                   if (item == config.warpShield) {
+                       warpShieldPresent = true;
+                   }
+               }
+           }
+
+           if (!warpShieldPresent) {
+               owner.getItemContainer().add(config.warpShield);
+               owner.maybeEquip(game, config.warpShield, true);
+           }
+
+           owner.maybeEquip(game, config.warpShield, true);
        }
 
        shieldTimer -= game.getTimeStep();

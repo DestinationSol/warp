@@ -1,0 +1,19 @@
+{
+    "maxAngleVar": 0,
+    "angleVarDamp": 0,
+    "angleVarPerShot": 0,
+    "timeBetweenShots": 2.0,
+    "reloadTime": 2.0,
+    "price": 1000,
+    "clipName": "warp:solarBurstClip",
+    "gunLength": 0.25,
+    "texLenPerc": 0.87,
+    "displayName": "Solar Fusion Gun",
+    "lightOnShot": false,
+    "shootSounds": [
+        "warp:distortionShot"
+    ],
+    "reloadSounds": [
+        "warp:distortionReload"
+    ]
+}

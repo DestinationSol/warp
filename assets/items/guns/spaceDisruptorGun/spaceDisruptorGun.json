@@ -1,0 +1,20 @@
+{
+    "maxAngleVar": 360,
+    "angleVarDamp": 360,
+    "angleVarPerShot": 360,
+    "timeBetweenShots": 0.001,
+    "reloadTime": 120.0,
+    "price": 10000,
+    "clipName": "warp:spaceDisruptorClip",
+    "gunLength": 0.125,
+    "texLenPerc": 1.0,
+    "displayName": "Space Disruptor Gun",
+    "lightOnShot": false,
+    "fixed": true,
+    "shootSounds": [
+        "warp:distortionShot"
+    ],
+    "reloadSounds": [
+        "warp:distortionReload"
+    ]
+}

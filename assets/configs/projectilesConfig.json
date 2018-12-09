@@ -12,5 +12,19 @@
         "lightSz": 0,
 
         "collisionSound": "core:rocketCollision"
+    },
+    "solarBurst": {
+        "dmg": 32,
+        "dmgType": "energy",
+        "spdLen": 1,
+        "physSize": 0.25,
+        "acceleration": 1,
+
+        "tex": "warp:solarBurst",
+        "texSz": 0.25,
+        "texOrig": "0 0",
+        "lightSz": 0,
+
+        "collisionSound": "core:rocketCollision"
     }
 }
