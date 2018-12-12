@@ -1,0 +1,36 @@
+{
+    "size": 8,
+    "maxLife": 400,
+    "type": "station",
+    "gunSlots": [
+        {
+            "position": "0.21 0.7",
+            "isUnderneathHull": false,
+            "allowsRotation": true
+        },
+        {
+            "position": "0.79 0.7",
+            "isUnderneathHull": false,
+            "allowsRotation": true
+        }
+    ],
+    "lightSrcPoss": [
+        ".26 .93",
+        ".73 .93"
+    ],
+    "forceBeaconPoss": [
+        "0.5 0.5"
+    ],
+    "rigidBody": {
+        "origin": {
+            "x": 0.5075757503509521,
+            "y": 0.5359848737716675
+        },
+        "polygons": [
+        ],
+        "circles": [
+        ],
+        "shapes": [
+        ]
+    }
+}

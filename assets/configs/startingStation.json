@@ -1,10 +1,10 @@
 {
-    "hull": "core:station",
-    "items": "core:gun core:gun",
+    "hull": "warp:station",
+    "items": "",
 
     "guard": {
-        "hull": "core:imperialBig",
-        "items": "core:fixedGun core:fixedShotGun core:mediumArmor+core:heavyArmor core:shield+core:bigShield",
+        "hull": "warp:quasar",
+        "items": "core:heavyArmor-1 core:advancedShield-1 warp:spaceDisruptorGun-1 warp:solarFusionGun-2",
         "density": 3
     }
 }

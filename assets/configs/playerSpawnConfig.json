@@ -13,5 +13,10 @@
 	    "hull": "warp:quasar",
 	    "items": "3*rep core:heavyArmor-1 core:advancedShield-1 warp:spaceDisruptorGun-1 warp:solarFusionGun-2",
 	    "money": 200
+    },
+    "Warp Scout": {
+	    "hull": "warp:scout",
+	    "items": "3*rep core:lightArmor-1 core:smallShield-1",
+	    "money": 20
     }
 }
