@@ -16,19 +16,22 @@
 package org.destinationsol.warp.research.uiScreens;
 
 import org.destinationsol.SolApplication;
-import org.destinationsol.common.SolColor;
 import org.destinationsol.game.screens.RightPaneLayout;
 import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolUiBaseScreen;
 import org.destinationsol.ui.SolUiControl;
-import org.destinationsol.warp.research.systems.ResearchFinancer;
+import org.destinationsol.warp.research.systems.ResearchSystem;
 
 public class ResearchOverlayUiScreen extends SolUiBaseScreen {
     private final ResearchUiScreen researchUiScreen;
+    private final ResearchSystem researchSystem;
     private SolUiControl researchButtonControl;
+    private float lastResearchValue;
 
-    public ResearchOverlayUiScreen(ResearchFinancer researchFinancer) {
-        researchUiScreen = new ResearchUiScreen(researchFinancer);
+    public ResearchOverlayUiScreen(ResearchSystem researchSystem) {
+        this.researchSystem = researchSystem;
+        researchUiScreen = new ResearchUiScreen(researchSystem);
+        lastResearchValue = researchSystem.getResearchPoints();
     }
 
     @Override
@@ -41,6 +44,13 @@ public class ResearchOverlayUiScreen extends SolUiBaseScreen {
 
     @Override
     public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+
+        float researchPoints = researchSystem.getResearchPoints();
+        if (lastResearchValue < researchPoints) {
+            researchButtonControl.enableWarn();
+        }
+        lastResearchValue = researchPoints;
+
         if (researchButtonControl.isJustOff()) {
             boolean screenShown = solApplication.getInputManager().isScreenOn(researchUiScreen);
             solApplication.getInputManager().setScreen(solApplication, solApplication.getGame().getScreens().mainGameScreen);

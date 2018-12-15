@@ -16,6 +16,7 @@
 package org.destinationsol.warp.research.uiScreens;
 
 import com.badlogic.gdx.math.Rectangle;
+import org.destinationsol.Const;
 import org.destinationsol.SolApplication;
 import org.destinationsol.common.SolColor;
 import org.destinationsol.game.Hero;
@@ -26,7 +27,7 @@ import org.destinationsol.ui.SolUiControl;
 import org.destinationsol.ui.UiDrawer;
 import org.destinationsol.warp.research.ResearchAction;
 import org.destinationsol.warp.research.ResearchProvider;
-import org.destinationsol.warp.research.systems.ResearchFinancer;
+import org.destinationsol.warp.research.systems.ResearchSystem;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class ResearchUiScreen extends SolUiBaseScreen {
-    private static final float BUTTON_WIDTH = 0.8f;
+    private static final float BUTTON_WIDTH = 0.86f;
     private static final float BUTTON_HEIGHT = 0.04f;
-    private static final int BUTTONS_PER_PAGE = 16;
-    private final ResearchFinancer researchFinancer;
+    private static final int BUTTONS_PER_PAGE = Const.ITEM_GROUPS_PER_PAGE;
+    private final ResearchSystem researchSystem;
     private Rectangle background;
     private SolUiControl researchTextControl;
     private Map<Integer, List<SolUiControl>> researchButtons;
@@ -46,24 +47,24 @@ public class ResearchUiScreen extends SolUiBaseScreen {
     private SolUiControl sellResearchControl;
     private int actionsPage;
 
-    public ResearchUiScreen(ResearchFinancer researchFinancer) {
-        this.researchFinancer = researchFinancer;
+    public ResearchUiScreen(ResearchSystem researchSystem) {
+        this.researchSystem = researchSystem;
     }
 
     public void onAdd(SolApplication application) {
         controls = new ArrayList<SolUiControl>();
 
         MenuLayout layout = application.getLayouts().menuLayout;
-        background = new Rectangle(0.1f, 0.1f, 0.9f, 0.8f);
+        background = new Rectangle(0.1f, 0.1f, 0.9f, 0.525f);
 
         researchTextControl = new SolUiControl(getButtonRectangle(0.105f, 0.105f), false);
-        researchTextControl.setDisplayName("Discovered research");
+        researchTextControl.setDisplayName("Research: " + Integer.toString((int) researchSystem.getResearchPoints()));
         controls.add(researchTextControl);
 
         researchButtons = new HashMap<Integer, List<SolUiControl>>();
         populateResearchButtons();
 
-        float researchButtonsHeight = (researchButtons.size() * 1.05f * BUTTON_HEIGHT);
+        float researchButtonsHeight = (BUTTONS_PER_PAGE * 1.05f * BUTTON_HEIGHT);
         sellResearchControl = new SolUiControl(getButtonRectangle(0.105f, 0.2f + researchButtonsHeight + BUTTON_HEIGHT), false);
         sellResearchControl.setDisplayName("Sell All Science");
         controls.add(sellResearchControl);
@@ -86,33 +87,13 @@ public class ResearchUiScreen extends SolUiBaseScreen {
 
     @Override
     public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
-        researchTextControl.setDisplayName("Research: " + Integer.toString((int) researchFinancer.getResearchPoints()));
-
-        int researchActionCount = researchButtons.size();
+        researchTextControl.setDisplayName("Research: " + Integer.toString((int) researchSystem.getResearchPoints()));
 
         researchButtons.values().forEach(buttons -> controls.removeAll(buttons));
         researchButtons.clear();
         populateResearchButtons();
 
-        if (researchActionCount > researchButtons.size()) {
-            float researchButtonsHeight = (researchButtons.size() * 1.05f * BUTTON_HEIGHT);
-            controls.remove(sellResearchControl);
-            sellResearchControl = new SolUiControl(getButtonRectangle(0.105f, 0.2f + researchButtonsHeight + BUTTON_HEIGHT), false);
-            sellResearchControl.setDisplayName("Sell All Science");
-            controls.add(sellResearchControl);
-
-            controls.remove(previousButton);
-            previousButton = new SolUiControl(getHalfButtonRectangle(0.105f, 0.2f + researchButtonsHeight), false);
-            previousButton.setDisplayName("Previous");
-            controls.add(previousButton);
-
-            controls.remove(nextButton);
-            nextButton = new SolUiControl(getHalfButtonRectangle(0.105f + BUTTON_WIDTH, 0.2f + researchButtonsHeight), false);
-            nextButton.setDisplayName("Next");
-            controls.add(nextButton);
-        }
-
-        sellResearchControl.setEnabled(solApplication.getGame().getScreens().mainGameScreen.talkControl.isEnabled() && (int) researchFinancer.getResearchPoints() > 0);
+        sellResearchControl.setEnabled(solApplication.getGame().getScreens().mainGameScreen.talkControl.isEnabled() && (int) researchSystem.getResearchPoints() > 0);
 
         previousButton.setEnabled(actionsPage > 0);
 
@@ -128,7 +109,7 @@ public class ResearchUiScreen extends SolUiBaseScreen {
 
         if (sellResearchControl.isJustOff()) {
             Hero hero = solApplication.getGame().getHero();
-            researchFinancer.sellResearchPoints(hero, researchFinancer.getResearchPoints());
+            researchSystem.sellResearchPoints(hero, researchSystem.getResearchPoints());
         }
     }
 
@@ -142,10 +123,10 @@ public class ResearchUiScreen extends SolUiBaseScreen {
 
     private void populateResearchButtons() {
         int actionNo = 0;
-        for (ResearchProvider provider : ResearchFinancer.getResearchProviders()) {
+        for (ResearchProvider provider : ResearchSystem.getResearchProviders()) {
             for (ResearchAction action : provider.getDiscoveredActions()) {
                 SolUiControl researchButton = new SolUiControl(getButtonRectangle(0.105f, 0.15f + (actionNo * 1.005f * BUTTON_HEIGHT)), false);
-                researchButton.setDisplayName(action.getDescription());
+                researchButton.setDisplayName(action.getObjective());
 
                 int pageNo = actionNo / BUTTONS_PER_PAGE;
 

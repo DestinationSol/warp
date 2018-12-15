@@ -43,7 +43,13 @@ public interface ResearchAction {
     boolean isResearchComplete();
 
     /**
-     * Returns a description of the action to be completed
+     * Returns a description of the objective of the action to be completed
+     * @return the description
+     */
+    String getObjective();
+
+    /**
+     * Returns a description of how to complete the action required
      * @return the description
      */
     String getDescription();

@@ -28,19 +28,21 @@ import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.warp.research.ResearchAction;
 import org.destinationsol.warp.research.ResearchProvider;
 import org.destinationsol.warp.research.providers.PlanetResearchProvider;
+import org.destinationsol.warp.research.providers.SolarResearchProvider;
 import org.destinationsol.warp.research.uiScreens.ResearchOverlayUiScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RegisterUpdateSystem()
-public class ResearchFinancer implements UpdateAwareSystem {
+public class ResearchSystem implements UpdateAwareSystem {
     private static final String RESEARCH_POINT_ICON_PATH = "warp:researchPointIcon";
     private static final String[] DEFAULT_RESEARCH_SHIPS = new String[] {
             "warp:scout"
     };
     private static final ResearchProvider[] DEFAULT_RESEARCH_PROVIDERS = new ResearchProvider[] {
-            new PlanetResearchProvider()
+            new PlanetResearchProvider(),
+            new SolarResearchProvider()
     };
     private static final float RESEARCH_EXCHANGE_RATE = 4;
     private static List<String> researchShips;
@@ -60,12 +62,16 @@ public class ResearchFinancer implements UpdateAwareSystem {
         }
     }
 
-    public ResearchFinancer() {
+    public ResearchSystem() {
         TextureAtlas.AtlasRegion researchPointIcon = Assets.getAtlasRegion(RESEARCH_POINT_ICON_PATH);
     }
 
     @Override
     public void update(SolGame game, float timeStep) {
+        if (game.getHero().isDead()) {
+            return;
+        }
+
         if (researchOverlayUi == null) {
             researchOverlayUi = new ResearchOverlayUiScreen(this);
         }
@@ -82,7 +88,9 @@ public class ResearchFinancer implements UpdateAwareSystem {
             for (ResearchProvider provider : researchProviders) {
                 if (provider.canProvideResearch(game, researchShip)) {
                     ResearchAction action = provider.getAction(game, researchShip);
-                    researchPoints += action.doResearch(game, researchShip);
+                    if (action != null) {
+                        researchPoints += action.doResearch(game, researchShip);
+                    }
                 }
             }
         }

@@ -16,38 +16,46 @@
 package org.destinationsol.warp.research.actions;
 
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.SolSystem;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.warp.research.ResearchAction;
 
-public class PlanetResearchAction implements ResearchAction {
-    private static final float DEFAULT_PLANET_YIELD = 0.5f;
-    private static final float DEFAULT_PLANET_YIELD_MAX = 120;
-    private final Planet planetToResearch;
-    private float research;
+public class SolarResearchAction implements ResearchAction {
+    private static final float SOLAR_YIELD = 6.0f;
+    private static final float RESEARCH_DISTANCE_RATE = 0.06f;
+    private final SolSystem solarSystem;
+    private float currentSolarYield;
 
-    public PlanetResearchAction(Planet planetToResearch) {
-        this.planetToResearch = planetToResearch;
+    public SolarResearchAction(SolSystem solarSystem) {
+        this.solarSystem = solarSystem;
     }
 
+    /**
+     * Obtains the maximum amount of research possible from this activity.
+     *
+     * @return the research quantity
+     */
     @Override
     public float getMaxYield() {
-        return DEFAULT_PLANET_YIELD_MAX * (planetToResearch.getSystem().getConfig().hard ? 2 : 1);
+        return 200;
     }
 
+    /**
+     * Does some research, potentially yielding research points
+     *
+     * @param game         the game instance to research in
+     * @param researchShip the ship doing the research
+     * @return the quantity of research points gained
+     */
     @Override
     public float doResearch(SolGame game, SolShip researchShip) {
         if (isResearchComplete()) {
             return 0;
         }
 
-        if (planetToResearch.isNearGround(researchShip.getPosition())) {
-            float researchPoints = DEFAULT_PLANET_YIELD * (planetToResearch.getSystem().getConfig().hard ? 2 : 1) * game.getTimeStep();
-            research += researchPoints;
-            return researchPoints;
-        }
-
-        return 0;
+        float research = (SOLAR_YIELD / (solarSystem.getPosition().dst(researchShip.getPosition()) * RESEARCH_DISTANCE_RATE) * game.getTimeStep());
+        currentSolarYield += research;
+        return research;
     }
 
     /**
@@ -57,7 +65,7 @@ public class PlanetResearchAction implements ResearchAction {
      */
     @Override
     public boolean isResearchComplete() {
-        return (research >= getMaxYield());
+        return (currentSolarYield >= getMaxYield());
     }
 
     /**
@@ -67,8 +75,8 @@ public class PlanetResearchAction implements ResearchAction {
      */
     @Override
     public String getObjective() {
-        return "Study " + planetToResearch.getName() + " in " + planetToResearch.getSystem().getName() + " "
-                + Integer.toString((int) research) + "/" + Integer.toString((int) getMaxYield());
+        return "Study the sun of " + solarSystem.getName() + " " + Integer.toString((int) currentSolarYield) + "/"
+                + Integer.toString((int) getMaxYield());
     }
 
     /**
@@ -78,7 +86,7 @@ public class PlanetResearchAction implements ResearchAction {
      */
     @Override
     public String getDescription() {
-        return "Land on " + planetToResearch.getName() + " in " + planetToResearch.getSystem().getName()
-                + " and explore. The research will automatically accumulate when near the planet's surface.";
+        return "Get as close to the sun in the " + solarSystem.getName()
+                + " system. The closer you get, the quicker this can be researched.";
     }
 }
