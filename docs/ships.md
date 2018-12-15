@@ -7,7 +7,7 @@ Aftwards, if you choose, the scout can equip fixed weapons, although it posesses
 ##### Weapons
 The scout ship does not initially posses any weapons.
 #### Image
-![An image of the scout ship](assets/ships/scout/scout.png)
+![An image of the scout ship](../assets/ships/scout/scout.png)
 
 ### Explorer
 #### Information
@@ -19,7 +19,7 @@ most enemies with ease. It cannot currently perform scientific activities, so it
 ##### Ability
 The explorer can speed-up time with its ability.
 #### Image
-![An image of the explorer ship](assets/ships/explorer/explorer.png)
+![An image of the explorer ship](../assets/ships/explorer/explorer.png?raw=1)
 
 ### Endeavour
 #### Information
@@ -31,7 +31,7 @@ two distortion weapons, which distort space randomly around the ship to damage e
 ##### Ability
 The endeavour's ablity permits it to warp to the nearest planet, travelling there by the most direct route.
 #### Image
-![An image of the endeavour ship](assets/ships/endeavour/endeavour.png)
+![An image of the endeavour ship](../assets/ships/endeavour/endeavour.png)
 
 ### Quasar
 #### Information
@@ -45,4 +45,4 @@ It takes two minutes to charge after complete use though.
 ##### Ability
 The quasar has the ability to instantly summon 6 mercenaries to its aid.
 #### Image
-![An image of the quasar ship](assets/ships/quasar/quasar.png)
+![An image of the quasar ship](../assets/ships/quasar/quasar.png)
