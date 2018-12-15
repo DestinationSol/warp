@@ -53,12 +53,12 @@ public class ResearchSystem implements UpdateAwareSystem {
     static {
         researchShips = new ArrayList<String>();
         for (String defaultShip : DEFAULT_RESEARCH_SHIPS) {
-            researchShips.add(defaultShip);
+            addResearchShip(defaultShip);
         }
 
         researchProviders = new ArrayList<ResearchProvider>();
         for (ResearchProvider provider : DEFAULT_RESEARCH_PROVIDERS) {
-            researchProviders.add(provider);
+            addResearchProvider(provider);
         }
     }
 
@@ -108,7 +108,7 @@ public class ResearchSystem implements UpdateAwareSystem {
      * Registers a ship for being eligible for collecting research
      * @param shipName the ship to the registered
      */
-    public static void addResearchShips(String shipName) {
+    public static void addResearchShip(String shipName) {
         if (researchShips.contains(shipName)) {
             return;
         }
