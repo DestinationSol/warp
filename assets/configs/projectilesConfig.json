@@ -2,7 +2,7 @@
     "distortion": {
         "dmg": 16,
         "dmgType": "energy",
-        "spdLen": 1,
+        "speed": 1,
         "physSize": 1.0,
         "acceleration": 1,
 
@@ -16,7 +16,7 @@
     "solarBurst": {
         "dmg": 32,
         "dmgType": "energy",
-        "spdLen": 1,
+        "speed": 1,
         "physSize": 0.25,
         "acceleration": 1,
 
