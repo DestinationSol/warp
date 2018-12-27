@@ -169,7 +169,7 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
         }
 
         @Override
-        public Vector2 getSpeed() {
+        public Vector2 getVelocity() {
             return Vector2.Zero;
         }
 
