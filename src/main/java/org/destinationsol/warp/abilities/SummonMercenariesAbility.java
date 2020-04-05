@@ -50,7 +50,7 @@ public class SummonMercenariesAbility implements ShipAbility {
     public boolean update(SolGame game, SolShip owner, boolean tryToUse) {
         if (mercenary == null) {
             mercenary = new MercItem(new ShipConfig(game.getHullConfigManager().getConfig(config.mercenaryName),
-                    config.mercenaryItems, 0, 1, null, game.getItemMan()));
+                    config.mercenaryItems, 0, 1, null, game.getItemMan(), ""));
         }
 
         if (tryToUse) {
