@@ -1,5 +1,5 @@
 {
-    "maxLife": 1.0,
+    "maxLife": 1,
     "idleTime": 2.8,
     "regenSpd": 1.0,
     "bulletDmgFactor": 0.0,
