@@ -33,24 +33,32 @@ import org.destinationsol.game.planet.SolSystem;
 import org.destinationsol.game.ship.ForceBeacon;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
+import org.destinationsol.warp.research.warnDrawers.WormholeWarnDrawer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RegisterUpdateSystem
+@RegisterUpdateSystem(priority = Integer.MIN_VALUE)
 public class WormholeDistortionProvider implements UpdateAwareSystem {
     private static final String WORMHOLE_TEXTURE_PATH = "warp:distortionProjectile";
     private static final int WORMHOLE_MIN = 4000;
     private static final int WORMHOLE_MAX = 8000;
+    private static List<DistortionObject> wormholes = new ArrayList<DistortionObject>();
     private final TextureAtlas.AtlasRegion wormholeTexture;
-    private List<DistortionObject> wormholes = new ArrayList<DistortionObject>();
+    private final WormholeWarnDrawer wormholeWarnDrawer;
 
     public WormholeDistortionProvider() {
         wormholeTexture = Assets.getAtlasRegion(WORMHOLE_TEXTURE_PATH);
+        wormholeWarnDrawer = new WormholeWarnDrawer();
     }
 
     @Override
     public void update(SolGame game, float timeStep) {
+        long seed = SolRandom.getSeed();
+        if (!game.getScreens().mainGameScreen.hasWarnDrawer(wormholeWarnDrawer)) {
+            game.getScreens().mainGameScreen.addWarnDrawer(wormholeWarnDrawer);
+        }
+
         if (wormholes.isEmpty()) {
             Vector2 worldExtentsMin = new Vector2();
             Vector2 worldExtentsMax = new Vector2();
@@ -68,6 +76,10 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
                     worldExtentsMax.y = systemPosition.y;
                 }
             }
+
+            // TODO: Why is this here? Is it resetting the random number generator after generating
+            // the wormholes to ensure consistency between warp-enabled and non-warp saves?
+            SolRandom.setSeed(seed);
 
             for (int i = 0; i < SolRandom.seededRandomInt(WORMHOLE_MIN, WORMHOLE_MAX); i++) {
                 Vector2 position;
@@ -92,10 +104,17 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
                 wormholes.add(exitWormhole);
                 game.getObjectManager().addObjDelayed(exitWormhole);
             }
+
+            SolRandom.setSeed(seed);
         }
     }
 
-    private class DistortionObject implements SolObject {
+    // TODO: make this non-static
+    public static List<WormholeDistortionProvider.DistortionObject> getWormholes() {
+        return wormholes;
+    }
+
+    public class DistortionObject implements SolObject {
         private final Vector2 wormholePosition;
         private final Vector2 target;
         private final List<Drawable> drawables = new ArrayList<Drawable>();

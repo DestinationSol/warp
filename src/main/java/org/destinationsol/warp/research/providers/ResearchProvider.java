@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.warp.research;
+package org.destinationsol.warp.research.providers;
 
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.ship.SolShip;
+import org.destinationsol.warp.research.actions.ResearchAction;
 
 /**
  * Represents a provider of research, which can allocate and record the research done
  */
 public interface ResearchProvider {
+    /**
+     * Returns the name for the ResearchProvider, which is used to maintain its state.
+     * @return the name of the ResearchProvider.
+     */
+    String getName();
+
     /**
      * Returns true if the provider is currently capable of doing research
      * @param game the game to research in
@@ -43,4 +50,9 @@ public interface ResearchProvider {
      * @return the currently discovered actions
      */
     ResearchAction[] getDiscoveredActions();
+
+    /**
+     * Resets the internal state of the research provider.
+     */
+    void reset();
 }

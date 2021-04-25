@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 MovingBlocks
+ * Copyright 2021 The Terasology Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,18 @@ package org.destinationsol.warp.research.actions;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.SolSystem;
 import org.destinationsol.game.ship.SolShip;
+import org.destinationsol.warp.research.systems.WormholeDistortionProvider;
 
-public class SolarResearchAction implements ResearchAction {
-    private static final float SOLAR_YIELD = 6.0f;
-    private static final float RESEARCH_DISTANCE_RATE = 0.06f;
-    private final SolSystem solarSystem;
-    private float currentSolarYield;
+public class WormholeResearchAction implements ResearchAction {
+    private static final float WORMHOLE_YIELD = 1.0f;
+    private static final float MAX_WORMHOLE_YIELD = 10.0f;
+    private WormholeDistortionProvider.DistortionObject distortionObject;
+    private SolSystem researchSystem;
+    private float currentYield;
 
-    public SolarResearchAction(SolSystem solarSystem) {
-        this.solarSystem = solarSystem;
+    public WormholeResearchAction(WormholeDistortionProvider.DistortionObject distortionObject, SolSystem researchSystem) {
+        this.distortionObject = distortionObject;
+        this.researchSystem = researchSystem;
     }
 
     /**
@@ -36,7 +39,7 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public float getMaxYield() {
-        return 200;
+        return MAX_WORMHOLE_YIELD;
     }
 
     /**
@@ -48,13 +51,13 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public float doResearch(SolGame game, SolShip researchShip) {
-        if (isResearchComplete()) {
+        if (distortionObject.getPosition().dst(researchShip.getPosition()) > 2.0f || isResearchComplete()) {
             return 0;
         }
 
-        float research = (SOLAR_YIELD / (solarSystem.getPosition().dst(researchShip.getPosition()) * RESEARCH_DISTANCE_RATE) * game.getTimeStep());
-        currentSolarYield += research;
-        return research;
+        float yield = WORMHOLE_YIELD * game.getTimeStep();
+        currentYield += yield;
+        return yield;
     }
 
     /**
@@ -64,18 +67,17 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public boolean isResearchComplete() {
-        return (currentSolarYield >= getMaxYield());
+        return currentYield >= getMaxYield();
     }
 
     /**
-     * Returns a description of the action to be completed
+     * Returns a description of the objective of the action to be completed
      *
      * @return the description
      */
     @Override
     public String getObjective() {
-        return "Study the sun of " + solarSystem.getName() + " " + Integer.toString((int) currentSolarYield) + "/"
-                + Integer.toString((int) getMaxYield());
+        return "Investigate gravitational anomaly near the " + researchSystem.getName() + " system.";
     }
 
     /**
@@ -85,7 +87,11 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public String getDescription() {
-        return "Get as close to the sun in the " + solarSystem.getName()
-                + " system. The closer you get, the quicker this can be researched.";
+        return "A gravitational disturbance has been detected near the " + researchSystem.getName() + " system." + "\n" +
+                "Locate the source of the anomaly and investigate.";
+    }
+
+    public WormholeDistortionProvider.DistortionObject getDistortionObject() {
+        return distortionObject;
     }
 }

@@ -61,7 +61,8 @@ public class SummonMercenariesAbility implements ShipAbility {
                 ShipConfig mercConfig = mercenary.getConfig();
                 Guardian guardian = new Guardian(game, mercConfig.hull, owner.getPilot(), owner.getPosition(),
                         owner.getHull().config, SolRandom.randomFloat(180));
-                AiPilot pilot = new AiPilot(guardian, true, owner.getPilot().getFaction(), false,"Merc", Const.AI_DET_DIST);
+                AiPilot pilot = new AiPilot(guardian, true, owner.getPilot().getFaction(), false,
+                        "Merc", Const.AI_DET_DIST);
                 Vector2 position = getPos(game, owner, mercConfig.hull);
                 if (position == null) {
                     return false;

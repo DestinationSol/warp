@@ -15,39 +15,41 @@
  */
 package org.destinationsol.warp.research.systems;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import org.destinationsol.SolApplication;
-import org.destinationsol.assets.Assets;
 import org.destinationsol.game.Hero;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.attributes.RegisterUpdateSystem;
+import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.screens.MainGameScreen;
 import org.destinationsol.game.ship.SolShip;
-import org.destinationsol.warp.research.ResearchAction;
-import org.destinationsol.warp.research.ResearchProvider;
+import org.destinationsol.warp.research.actions.ResearchAction;
+import org.destinationsol.warp.research.providers.ResearchProvider;
 import org.destinationsol.warp.research.providers.PlanetResearchProvider;
 import org.destinationsol.warp.research.providers.SolarResearchProvider;
+import org.destinationsol.warp.research.providers.WormholeResearchProvider;
 import org.destinationsol.warp.research.uiScreens.ResearchOverlayUiScreen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RegisterUpdateSystem()
+@RegisterUpdateSystem
 public class ResearchSystem implements UpdateAwareSystem {
+    private static float researchPoints;
     private static final String RESEARCH_POINT_ICON_PATH = "warp:researchPointIcon";
     private static final String[] DEFAULT_RESEARCH_SHIPS = new String[] {
-            "warp:scout"
+            "warp:scout",
+            "warp:explorer"
     };
     private static final ResearchProvider[] DEFAULT_RESEARCH_PROVIDERS = new ResearchProvider[] {
             new PlanetResearchProvider(),
-            new SolarResearchProvider()
+            new SolarResearchProvider(),
+            new WormholeResearchProvider()
     };
     private static final float RESEARCH_EXCHANGE_RATE = 4;
     private static List<String> researchShips;
     private static List<ResearchProvider> researchProviders;
-    private float researchPoints;
     private ResearchOverlayUiScreen researchOverlayUi;
 
     static {
@@ -60,10 +62,6 @@ public class ResearchSystem implements UpdateAwareSystem {
         for (ResearchProvider provider : DEFAULT_RESEARCH_PROVIDERS) {
             addResearchProvider(provider);
         }
-    }
-
-    public ResearchSystem() {
-        TextureAtlas.AtlasRegion researchPointIcon = Assets.getAtlasRegion(RESEARCH_POINT_ICON_PATH);
     }
 
     @Override
@@ -79,7 +77,20 @@ public class ResearchSystem implements UpdateAwareSystem {
         SolApplication application = game.getSolApplication();
         if (researchOverlayUi != null && application.getInputManager().getTopScreen() instanceof MainGameScreen
             && !game.getScreens().mainGameScreen.hasOverlay(researchOverlayUi)) {
-            game.getScreens().mainGameScreen.addOverlayScreen(researchOverlayUi);
+            // Only show the research UI when flying a research-capable ship
+            if (researchShips.contains(game.getHero().getShip().getHull().getHullConfig().getInternalName())) {
+                // Either started a new game or continued an existing one.
+                game.getScreens().mainGameScreen.addOverlayScreen(researchOverlayUi);
+
+                game.getItemMan().parseItems("warp:researchCharge");
+                SolItem researchItem = game.getItemMan().getExample("warp:researchCharge");
+                // If it's a new game (no research charge present), then reset all research.
+                if (game.getHero().getItemContainer().count(researchItem) <= 0) {
+                    game.getHero().getItemContainer().add(researchItem);
+                    researchPoints = 0;
+                    resetResearchProviders();
+                }
+            }
         }
 
         Hero hero = game.getHero();
@@ -144,5 +155,11 @@ public class ResearchSystem implements UpdateAwareSystem {
     public void sellResearchPoints(Hero hero, float points) {
         researchPoints -= MathUtils.clamp(points, 0, researchPoints);
         hero.setMoney(hero.getMoney() + (points * RESEARCH_EXCHANGE_RATE));
+    }
+
+    private static void resetResearchProviders() {
+        for (ResearchProvider provider : researchProviders) {
+            provider.reset();
+        }
     }
 }

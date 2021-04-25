@@ -25,8 +25,8 @@ import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolUiBaseScreen;
 import org.destinationsol.ui.SolUiControl;
 import org.destinationsol.ui.UiDrawer;
-import org.destinationsol.warp.research.ResearchAction;
-import org.destinationsol.warp.research.ResearchProvider;
+import org.destinationsol.warp.research.actions.ResearchAction;
+import org.destinationsol.warp.research.providers.ResearchProvider;
 import org.destinationsol.warp.research.systems.ResearchSystem;
 
 import java.util.HashMap;
@@ -54,7 +54,9 @@ public class ResearchUiScreen extends SolUiBaseScreen {
     public void onAdd(SolApplication application) {
         controls = new ArrayList<SolUiControl>();
 
+        // NOTE: Removing the following line prevents the menu from being shown in-game.
         MenuLayout layout = application.getLayouts().menuLayout;
+
         background = new Rectangle(0.1f, 0.1f, 0.9f, 0.525f);
 
         researchTextControl = new SolUiControl(getButtonRectangle(0.105f, 0.105f), false);
@@ -66,7 +68,7 @@ public class ResearchUiScreen extends SolUiBaseScreen {
 
         float researchButtonsHeight = (BUTTONS_PER_PAGE * 1.05f * BUTTON_HEIGHT);
         sellResearchControl = new SolUiControl(getButtonRectangle(0.105f, 0.2f + researchButtonsHeight + BUTTON_HEIGHT), false);
-        sellResearchControl.setDisplayName("Sell All Science");
+        sellResearchControl.setDisplayName("Sell All Research");
         controls.add(sellResearchControl);
 
         previousButton = new SolUiControl(getHalfButtonRectangle(0.105f, 0.2f + researchButtonsHeight), false);
@@ -93,7 +95,8 @@ public class ResearchUiScreen extends SolUiBaseScreen {
         researchButtons.clear();
         populateResearchButtons();
 
-        sellResearchControl.setEnabled(solApplication.getGame().getScreens().mainGameScreen.talkControl.isEnabled() && (int) researchSystem.getResearchPoints() > 0);
+        sellResearchControl.setEnabled(solApplication.getGame().getScreens().mainGameScreen.talkControl.isEnabled()
+                && (int) researchSystem.getResearchPoints() > 0 && !solApplication.getGame().getHero().isTranscendent());
 
         previousButton.setEnabled(actionsPage > 0);
 
@@ -123,12 +126,18 @@ public class ResearchUiScreen extends SolUiBaseScreen {
 
     private void populateResearchButtons() {
         int actionNo = 0;
+        int heightOffset = 0;
         for (ResearchProvider provider : ResearchSystem.getResearchProviders()) {
             for (ResearchAction action : provider.getDiscoveredActions()) {
-                SolUiControl researchButton = new SolUiControl(getButtonRectangle(0.105f, 0.15f + (actionNo * 1.005f * BUTTON_HEIGHT)), false);
-                researchButton.setDisplayName(action.getObjective());
-
                 int pageNo = actionNo / BUTTONS_PER_PAGE;
+                if (actionNo % BUTTONS_PER_PAGE == 0) {
+                    heightOffset = 0;
+                } else {
+                    heightOffset++;
+                }
+
+                SolUiControl researchButton = new SolUiControl(getButtonRectangle(0.105f, 0.15f + (heightOffset * 1.005f * BUTTON_HEIGHT)), false);
+                researchButton.setDisplayName(action.getObjective());
 
                 if (!researchButtons.containsKey(pageNo)) {
                     researchButtons.put(pageNo, new ArrayList<SolUiControl>());

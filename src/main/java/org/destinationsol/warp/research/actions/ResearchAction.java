@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.destinationsol.warp.research;
+package org.destinationsol.warp.research.actions;
 
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.ship.SolShip;
