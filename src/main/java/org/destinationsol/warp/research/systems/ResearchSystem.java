@@ -77,8 +77,10 @@ public class ResearchSystem implements UpdateAwareSystem {
         SolApplication application = game.getSolApplication();
         if (researchOverlayUi != null && application.getInputManager().getTopScreen() instanceof MainGameScreen
             && !game.getScreens().mainGameScreen.hasOverlay(researchOverlayUi)) {
-            // Only show the research UI when flying a research-capable ship
-            if (researchShips.contains(game.getHero().getShip().getHull().getHullConfig().getInternalName())) {
+            // Only show the research UI when flying a research-capable ship.
+            // Don't check if the player is currently transcendent.
+            if (!game.getHero().isTranscendent() && researchShips.contains(
+                    game.getHero().getShip().getHull().getHullConfig().getInternalName())) {
                 // Either started a new game or continued an existing one.
                 game.getScreens().mainGameScreen.addOverlayScreen(researchOverlayUi);
 

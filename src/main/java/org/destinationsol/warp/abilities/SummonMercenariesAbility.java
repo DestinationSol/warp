@@ -193,8 +193,8 @@ public class SummonMercenariesAbility implements ShipAbility {
         }
 
         public static AbilityConfig load(JSONObject abNode, ItemManager itemManager, AbilityCommonConfig cc) {
-            float rechargeTime = abNode.getFloat("rechargeTime");
-            float summonDuration = abNode.getFloat("summonDuration");
+            float rechargeTime = (float) abNode.getDouble("rechargeTime");
+            float summonDuration = (float) abNode.getDouble("summonDuration");
             String mercenaryType = abNode.getString("mercenary");
             String mercenaryItems = abNode.getString("mercenaryItems");
             int mercenaryCount = abNode.getInt("mercenaryCount");
