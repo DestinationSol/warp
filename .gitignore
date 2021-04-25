@@ -5,6 +5,9 @@ hs_err_pid*
 config/metrics
 *log
 
+# Destination Sol modules do not manage their own build.gradle files. Instead a template build.gradle file is copied into the modules when they are compiled.
+build.gradle
+
 ## Ignored sub-projects with nested Git roots
 android
 gwt
