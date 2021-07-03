@@ -37,7 +37,7 @@ public class ResearchOverlayUiScreen extends SolUiBaseScreen {
     @Override
     public void onAdd(SolApplication application) {
         RightPaneLayout rightLayout = application.getLayouts().rightPaneLayout;
-        researchButtonControl = new SolUiControl(rightLayout.buttonRect(5), true);
+        researchButtonControl = new SolUiControl(rightLayout.buttonRect(application.isMobile() ? 6 : 5), true);
         researchButtonControl.setDisplayName("Research");
         controls.add(researchButtonControl);
     }

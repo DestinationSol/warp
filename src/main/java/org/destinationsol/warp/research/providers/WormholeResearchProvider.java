@@ -99,7 +99,7 @@ public class WormholeResearchProvider implements ResearchProvider {
         WormholeDistortionProvider.DistortionObject nearestObject = null;
         float nearestDistance = Float.POSITIVE_INFINITY;
 
-        for (WormholeDistortionProvider.DistortionObject object : WormholeDistortionProvider.getWormholes()) {
+        for (WormholeDistortionProvider.DistortionObject object : WormholeDistortionProvider.getWormholeObjects()) {
             float distance = researchShip.getPosition().dst(object.getPosition());
             if (distance < nearestDistance && distance < 3.0f) {
                 nearestDistance = distance;

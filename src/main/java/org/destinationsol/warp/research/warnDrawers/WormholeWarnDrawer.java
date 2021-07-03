@@ -21,13 +21,22 @@ import org.destinationsol.game.screens.WarnDrawer;
 import org.destinationsol.warp.research.systems.WormholeDistortionProvider;
 
 public class WormholeWarnDrawer extends WarnDrawer {
+    private static final float WARN_UPDATE_INTERVAL = 0.5f;
+    private float warnUpdateTimer = WARN_UPDATE_INTERVAL;
+
     public WormholeWarnDrawer() {
         super("Distortion Near", Color.ORANGE);
     }
 
     @Override
     protected boolean shouldWarn(SolGame game) {
-        return WormholeDistortionProvider.getWormholes().stream().anyMatch(
+        warnUpdateTimer -= game.getTimeStep();
+        if (warnUpdateTimer <= 0) {
+            warnUpdateTimer = WARN_UPDATE_INTERVAL;
+            return WormholeDistortionProvider.getWormholeObjects().stream().anyMatch(
                 element -> element.getPosition().dst(game.getHero().getPosition()) < 5.0f);
+        } else {
+            return false;
+        }
     }
 }

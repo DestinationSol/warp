@@ -139,8 +139,8 @@ public class WarpShieldAbility implements ShipAbility {
         }
 
         public static AbilityConfig load(JSONObject abNode, ItemManager itemManager, AbilityCommonConfig cc) {
-            float rechargeTime = abNode.getFloat("rechargeTime");
-            float shieldDuration = abNode.getFloat("shieldDuration");
+            float rechargeTime = (float) abNode.getDouble("rechargeTime");
+            float shieldDuration = (float) abNode.getDouble("shieldDuration");
             String warpShieldName = abNode.getString("shield");
             String warpShieldTexName = abNode.optString("shieldTex", warpShieldName);
             itemManager.parseItems(warpShieldName);

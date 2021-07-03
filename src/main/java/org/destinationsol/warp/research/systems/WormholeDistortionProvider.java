@@ -41,9 +41,10 @@ import java.util.List;
 @RegisterUpdateSystem(priority = Integer.MIN_VALUE)
 public class WormholeDistortionProvider implements UpdateAwareSystem {
     private static final String WORMHOLE_TEXTURE_PATH = "warp:distortionProjectile";
-    private static final int WORMHOLE_MIN = 4000;
-    private static final int WORMHOLE_MAX = 8000;
-    private static List<DistortionObject> wormholes = new ArrayList<DistortionObject>();
+    private static final int WORMHOLE_MIN = 1000;
+    private static final int WORMHOLE_MAX = 4000;
+    private static List<Wormhole> wormholes = new ArrayList<Wormhole>();
+    private static List<DistortionObject> wormholeObjects = new ArrayList<DistortionObject>();
     private final TextureAtlas.AtlasRegion wormholeTexture;
     private final WormholeWarnDrawer wormholeWarnDrawer;
 
@@ -96,22 +97,47 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
                     targetPosition = new Vector2(targetValueX, targetValueY);
                 } while (!game.isPlaceEmpty(targetPosition, true) && targetPosition.dst(position) > 10.0f);
 
-                DistortionObject entryWormhole = new DistortionObject(position, targetPosition, 10.0f);
-                wormholes.add(entryWormhole);
-                game.getObjectManager().addObjDelayed(entryWormhole);
-
-                DistortionObject exitWormhole = new DistortionObject(targetPosition, position, 10.0f);
-                wormholes.add(exitWormhole);
-                game.getObjectManager().addObjDelayed(exitWormhole);
+                wormholes.add(new Wormhole(position, targetPosition));
             }
 
             SolRandom.setSeed(seed);
         }
+
+        Vector2 heroPosition = game.getHero().getPosition();
+        wormholes.stream()
+                .filter(wormhole -> wormhole.entryPoint.dst(heroPosition) < 50 || wormhole.exitPoint.dst(heroPosition) < 50)
+                .forEach(wormhole -> {
+                    DistortionObject entryWormhole = new DistortionObject(wormhole.entryPoint, wormhole.exitPoint, 10.0f);
+                    wormholeObjects.add(entryWormhole);
+                    game.getObjectManager().addObjDelayed(entryWormhole);
+
+                    DistortionObject exitWormhole = new DistortionObject(wormhole.entryPoint, wormhole.exitPoint, 10.0f);
+                    wormholeObjects.add(exitWormhole);
+                    game.getObjectManager().addObjDelayed(exitWormhole);
+                });
     }
 
     // TODO: make this non-static
-    public static List<WormholeDistortionProvider.DistortionObject> getWormholes() {
-        return wormholes;
+    public static List<DistortionObject> getWormholeObjects() {
+        return wormholeObjects;
+    }
+
+    public class Wormhole {
+        private final Vector2 entryPoint;
+        private final Vector2 exitPoint;
+
+        public Wormhole(Vector2 entryPoint, Vector2 exitPoint) {
+            this.entryPoint = entryPoint;
+            this.exitPoint = exitPoint;
+        }
+
+        public Vector2 getEntryPoint() {
+            return entryPoint;
+        }
+
+        public Vector2 getExitPoint() {
+            return exitPoint;
+        }
     }
 
     public class DistortionObject implements SolObject {
