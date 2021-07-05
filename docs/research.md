@@ -29,7 +29,7 @@ package org.destinationsol.warp.research.actions;
 
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.ship.SolShip;
-import org.destinationsol.warp.research.ResearchAction;
+import org.destinationsol.warp.research.actions.ResearchAction;
 
 public class MyResearchAction implements ResearchAction {
     private static final float RESEARCH_PER_SECOND = 1.5f;
@@ -78,8 +78,8 @@ package org.destinationsol.warp.research.providers;
 
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.ship.SolShip;
-import org.destinationsol.warp.research.ResearchAction;
-import org.destinationsol.warp.research.ResearchProvider;
+import org.destinationsol.warp.research.actions.ResearchAction;
+import org.destinationsol.warp.research.providers.ResearchProvider;
 import org.destinationsol.warp.research.actions.MyResearchAction;
 
 public class MyResearchProvider implements ResearchProvider {

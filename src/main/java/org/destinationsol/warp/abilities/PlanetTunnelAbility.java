@@ -104,7 +104,7 @@ public class PlanetTunnelAbility implements ShipAbility {
         }
 
         public static AbilityConfig load(JSONObject abNode, ItemManager itemManager, AbilityCommonConfig cc) {
-            float rechargeTime = abNode.getFloat("rechargeTime");
+            float rechargeTime = (float) abNode.getDouble("rechargeTime");
             return new PlanetTunnelAbilityConfig(rechargeTime, cc);
         }
     }

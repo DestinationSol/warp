@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 MovingBlocks
+ * Copyright 2021 The Terasology Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@
 package org.destinationsol.warp.research.actions;
 
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.planet.SolSystem;
 import org.destinationsol.game.ship.SolShip;
 
-public class SolarResearchAction implements ResearchAction {
-    private static final float SOLAR_YIELD = 6.0f;
-    private static final float RESEARCH_DISTANCE_RATE = 0.06f;
-    private final SolSystem solarSystem;
-    private float currentSolarYield;
+public class InstantResearchAction implements ResearchAction {
+    private float researchYield;
+    private String objective;
+    private String description;
+    private boolean researchYielded;
 
-    public SolarResearchAction(SolSystem solarSystem) {
-        this.solarSystem = solarSystem;
+    public InstantResearchAction(float researchYield, String objective, String description) {
+        this.researchYield = researchYield;
+        this.objective = objective;
+        this.description = description;
     }
 
     /**
@@ -36,7 +37,7 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public float getMaxYield() {
-        return 200;
+        return researchYield;
     }
 
     /**
@@ -48,13 +49,12 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public float doResearch(SolGame game, SolShip researchShip) {
-        if (isResearchComplete()) {
+        if (researchYielded) {
             return 0;
         }
 
-        float research = (SOLAR_YIELD / (solarSystem.getPosition().dst(researchShip.getPosition()) * RESEARCH_DISTANCE_RATE) * game.getTimeStep());
-        currentSolarYield += research;
-        return research;
+        researchYielded = true;
+        return researchYield;
     }
 
     /**
@@ -64,18 +64,17 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public boolean isResearchComplete() {
-        return (currentSolarYield >= getMaxYield());
+        return researchYielded;
     }
 
     /**
-     * Returns a description of the action to be completed
+     * Returns a description of the objective of the action to be completed
      *
      * @return the description
      */
     @Override
     public String getObjective() {
-        return "Study the sun of " + solarSystem.getName() + " " + Integer.toString((int) currentSolarYield) + "/"
-                + Integer.toString((int) getMaxYield());
+        return objective;
     }
 
     /**
@@ -85,7 +84,6 @@ public class SolarResearchAction implements ResearchAction {
      */
     @Override
     public String getDescription() {
-        return "Get as close to the sun in the " + solarSystem.getName()
-                + " system. The closer you get, the quicker this can be researched.";
+        return description;
     }
 }

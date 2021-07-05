@@ -18,7 +18,6 @@ package org.destinationsol.warp.research.actions;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.Planet;
 import org.destinationsol.game.ship.SolShip;
-import org.destinationsol.warp.research.ResearchAction;
 
 public class PlanetResearchAction implements ResearchAction {
     private static final float DEFAULT_PLANET_YIELD = 0.5f;

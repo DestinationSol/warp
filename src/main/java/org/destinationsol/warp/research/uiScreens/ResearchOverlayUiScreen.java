@@ -36,15 +36,14 @@ public class ResearchOverlayUiScreen extends SolUiBaseScreen {
 
     @Override
     public void onAdd(SolApplication application) {
-        RightPaneLayout rightlayout = application.getLayouts().rightPaneLayout;
-        researchButtonControl = new SolUiControl(rightlayout.buttonRect(5), true);
+        RightPaneLayout rightLayout = application.getLayouts().rightPaneLayout;
+        researchButtonControl = new SolUiControl(rightLayout.buttonRect(application.isMobile() ? 6 : 5), true);
         researchButtonControl.setDisplayName("Research");
         controls.add(researchButtonControl);
     }
 
     @Override
     public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
-
         float researchPoints = researchSystem.getResearchPoints();
         if (lastResearchValue < researchPoints) {
             researchButtonControl.enableWarn();
@@ -59,5 +58,4 @@ public class ResearchOverlayUiScreen extends SolUiBaseScreen {
             }
         }
     }
-
 }

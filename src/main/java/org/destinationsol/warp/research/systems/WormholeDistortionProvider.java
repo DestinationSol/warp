@@ -30,72 +30,218 @@ import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
 import org.destinationsol.game.planet.SolSystem;
+import org.destinationsol.game.planet.SunSingleton;
 import org.destinationsol.game.ship.ForceBeacon;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
+import org.destinationsol.warp.research.warnDrawers.WormholeWarnDrawer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RegisterUpdateSystem
+@RegisterUpdateSystem(priority = Integer.MIN_VALUE)
 public class WormholeDistortionProvider implements UpdateAwareSystem {
     private static final String WORMHOLE_TEXTURE_PATH = "warp:distortionProjectile";
-    private static final int WORMHOLE_MIN = 4000;
-    private static final int WORMHOLE_MAX = 8000;
+    private static final int WORMHOLE_MIN = 100;
+    private static final int WORMHOLE_MAX = 600;
+    private static final int WORMHOLE_VISIBLE_DISTANCE = 5;
+    private static final boolean WORMHOLE_DEBUG = false;
+    private static List<Wormhole> wormholes = new ArrayList<Wormhole>();
+    private static List<DistortionObject> wormholeObjects = new ArrayList<DistortionObject>();
     private final TextureAtlas.AtlasRegion wormholeTexture;
-    private List<DistortionObject> wormholes = new ArrayList<DistortionObject>();
+    private final WormholeWarnDrawer wormholeWarnDrawer;
 
     public WormholeDistortionProvider() {
         wormholeTexture = Assets.getAtlasRegion(WORMHOLE_TEXTURE_PATH);
+        wormholeWarnDrawer = new WormholeWarnDrawer();
     }
 
     @Override
     public void update(SolGame game, float timeStep) {
+        if (!game.getScreens().mainGameScreen.hasWarnDrawer(wormholeWarnDrawer)) {
+            game.getScreens().mainGameScreen.addWarnDrawer(wormholeWarnDrawer);
+        }
+
         if (wormholes.isEmpty()) {
-            Vector2 worldExtentsMin = new Vector2();
-            Vector2 worldExtentsMax = new Vector2();
-            for (SolSystem system : game.getPlanetManager().getSystems()) {
-                Vector2 systemPosition = system.getPosition();
-                if (systemPosition.x < worldExtentsMin.x) {
-                    worldExtentsMin.x = systemPosition.x - system.getRadius();
-                } else if (systemPosition.x > worldExtentsMax.x) {
-                    worldExtentsMax.x = systemPosition.x;
+            spawnWormholes(game);
+            return;
+        }
+
+        Vector2 heroPosition = game.getHero().getPosition();
+        for (Wormhole wormhole : wormholes) {
+            boolean isEnabled = wormhole.isEnabled();
+            if (wormhole.getPosition().dst(heroPosition) < WORMHOLE_VISIBLE_DISTANCE) {
+                if (!isEnabled) {
+                    if (wormhole.getInstance() == null) {
+                        DistortionObject instance = new DistortionObject(wormhole.getPosition(), wormhole.getConnectedWormhole().getPosition(), 10.0f);
+                        wormhole.setInstance(instance);
+                    }
+
+                    DistortionObject instance = wormhole.getInstance();
+                    game.getObjectManager().addObjDelayed(instance);
+                    wormholeObjects.add(instance);
+                    wormhole.setEnabled(true);
                 }
-
-                if (systemPosition.y < worldExtentsMin.y) {
-                    worldExtentsMin.y = systemPosition.y - system.getRadius();
-                } else if (systemPosition.y > worldExtentsMax.y) {
-                    worldExtentsMax.y = systemPosition.y;
-                }
-            }
-
-            for (int i = 0; i < SolRandom.seededRandomInt(WORMHOLE_MIN, WORMHOLE_MAX); i++) {
-                Vector2 position;
-                do {
-                    float positionValueX = SolRandom.seededRandomFloat(worldExtentsMin.x, worldExtentsMax.x);
-                    float positionValueY = SolRandom.seededRandomFloat(worldExtentsMin.y, worldExtentsMax.y);
-                    position = new Vector2(positionValueX, positionValueY);
-                } while (!game.isPlaceEmpty(position, true));
-
-                Vector2 targetPosition;
-                do {
-                    float targetValueX = SolRandom.seededRandomFloat(worldExtentsMin.x, worldExtentsMax.x);
-                    float targetValueY = SolRandom.seededRandomFloat(worldExtentsMin.y, worldExtentsMax.y);
-                    targetPosition = new Vector2(targetValueX, targetValueY);
-                } while (!game.isPlaceEmpty(targetPosition, true) && targetPosition.dst(position) > 10.0f);
-
-                DistortionObject entryWormhole = new DistortionObject(position, targetPosition, 10.0f);
-                wormholes.add(entryWormhole);
-                game.getObjectManager().addObjDelayed(entryWormhole);
-
-                DistortionObject exitWormhole = new DistortionObject(targetPosition, position, 10.0f);
-                wormholes.add(exitWormhole);
-                game.getObjectManager().addObjDelayed(exitWormhole);
+            } else if (isEnabled && wormhole.getInstance() != null) {
+                DistortionObject instance = wormhole.getInstance();
+                wormholeObjects.remove(instance);
+                game.getObjectManager().removeObjDelayed(instance);
+                wormhole.setEnabled(false);
             }
         }
     }
 
-    private class DistortionObject implements SolObject {
+    private void spawnWormholes(SolGame game) {
+        long seed = SolRandom.getSeed();
+
+        List<SolSystem> systems = game.getPlanetManager().getSystems();
+
+        // TODO: Why is this here? Is it resetting the random number generator after generating
+        // the wormholes to ensure consistency between warp-enabled and non-warp saves?
+        SolRandom.setSeed(seed);
+
+        List<Vector2> wormholePositions = new ArrayList<Vector2>();
+
+        // Create wormholes
+        int wormholeCount = SolRandom.seededRandomInt(WORMHOLE_MIN, WORMHOLE_MAX);
+        if (wormholeCount % 2 != 0) {
+            // There must always be an even number of wormholes, as they come in pairs.
+            wormholeCount++;
+        }
+        int wormholesPerSystem = wormholeCount / systems.size();
+        for (SolSystem system : systems) {
+            for (int i = 0; i < wormholesPerSystem; i++) {
+                Vector2 position;
+                do {
+                    boolean positionRight = SolRandom.seededTest(0.5f);
+                    boolean positionTop = SolRandom.seededTest(0.5f);
+
+                    float positionValueX;
+                    float positionValueY;
+                    if (positionRight) {
+                        // Left
+                        positionValueX = SolRandom.seededRandomFloat(system.getPosition().x + SunSingleton.SUN_HOT_RAD,
+                                system.getPosition().x + system.getRadius());
+                    } else {
+                        // Right
+                        positionValueX = SolRandom.seededRandomFloat(system.getPosition().x - system.getRadius(),
+                                system.getPosition().x - SunSingleton.SUN_HOT_RAD);
+                    }
+
+                    if (positionTop) {
+                        // Top
+                        positionValueY = SolRandom.seededRandomFloat(system.getPosition().y + SunSingleton.SUN_HOT_RAD,
+                                system.getPosition().y + system.getRadius());
+                    } else {
+                        // Bottom
+                        positionValueY = SolRandom.seededRandomFloat(system.getPosition().y - system.getRadius(),
+                                system.getPosition().y - SunSingleton.SUN_HOT_RAD);
+                    }
+
+                    position = new Vector2(positionValueX, positionValueY);
+                } while (!isPositionFree(game, wormholePositions, position));
+
+                wormholePositions.add(position);
+            }
+        }
+
+        // Link wormholes
+        do {
+            int wormholeNo = SolRandom.seededRandomInt(0, wormholePositions.size());
+
+            int connectedWormholeNo;
+            do {
+                connectedWormholeNo = SolRandom.seededRandomInt(0, wormholePositions.size());
+            } while (connectedWormholeNo == wormholeNo);
+
+            Vector2 entryPosition = wormholePositions.get(wormholeNo);
+            Vector2 exitPosition = wormholePositions.get(connectedWormholeNo);
+
+            Wormhole entry = new Wormhole(entryPosition);
+            Wormhole exit = new Wormhole(exitPosition);
+            entry.setConnectedWormhole(exit);
+            exit.setConnectedWormhole(entry);
+
+            wormholes.add(entry);
+            wormholes.add(exit);
+
+            wormholePositions.remove(entryPosition);
+            wormholePositions.remove(exitPosition);
+        } while (!wormholePositions.isEmpty());
+
+        SolRandom.setSeed(seed);
+
+        // For debugging purposes, spawn two wormholes by the spawn point for testing.
+        if (WORMHOLE_DEBUG) {
+            Vector2 spawnPosition = game.getGalaxyFiller().getPlayerSpawnPos(game);
+            Wormhole entry = new Wormhole(new Vector2(spawnPosition.x + 10, spawnPosition.y));
+            Wormhole exit = new Wormhole(new Vector2(spawnPosition.x - 10, spawnPosition.y));
+            entry.setConnectedWormhole(exit);
+            exit.setConnectedWormhole(entry);
+            wormholes.add(entry);
+            wormholes.add(exit);
+        }
+    }
+
+    private boolean isPositionFree(SolGame game, List<Vector2> wormholePositions, Vector2 position) {
+        if (!game.isPlaceEmpty(position, true)) {
+            return false;
+        }
+
+        for (Vector2 wormhole : wormholePositions) {
+            if (wormhole.dst(position) < 2) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // TODO: make this non-static
+    public static List<DistortionObject> getWormholeObjects() {
+        return wormholeObjects;
+    }
+
+    public class Wormhole {
+        private final Vector2 position;
+        private DistortionObject instance;
+        private Wormhole connectedWormhole;
+        private boolean enabled;
+
+        public Wormhole(Vector2 position) {
+            this.position = position;
+        }
+
+        public Vector2 getPosition() {
+            return position;
+        }
+
+        public DistortionObject getInstance() {
+            return instance;
+        }
+
+        public void setInstance(DistortionObject instance) {
+            this.instance = instance;
+        }
+
+        public Wormhole getConnectedWormhole() {
+            return connectedWormhole;
+        }
+
+        public void setConnectedWormhole(Wormhole connectedWormhole) {
+            this.connectedWormhole = connectedWormhole;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public class DistortionObject implements SolObject {
         private final Vector2 wormholePosition;
         private final Vector2 target;
         private final List<Drawable> drawables = new ArrayList<Drawable>();

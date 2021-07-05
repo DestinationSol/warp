@@ -61,7 +61,8 @@ public class SummonMercenariesAbility implements ShipAbility {
                 ShipConfig mercConfig = mercenary.getConfig();
                 Guardian guardian = new Guardian(game, mercConfig.hull, owner.getPilot(), owner.getPosition(),
                         owner.getHull().config, SolRandom.randomFloat(180));
-                AiPilot pilot = new AiPilot(guardian, true, owner.getPilot().getFaction(), false,"Merc", Const.AI_DET_DIST);
+                AiPilot pilot = new AiPilot(guardian, true, owner.getPilot().getFaction(), false,
+                        "Merc", Const.AI_DET_DIST);
                 Vector2 position = getPos(game, owner, mercConfig.hull);
                 if (position == null) {
                     return false;
@@ -192,8 +193,8 @@ public class SummonMercenariesAbility implements ShipAbility {
         }
 
         public static AbilityConfig load(JSONObject abNode, ItemManager itemManager, AbilityCommonConfig cc) {
-            float rechargeTime = abNode.getFloat("rechargeTime");
-            float summonDuration = abNode.getFloat("summonDuration");
+            float rechargeTime = (float) abNode.getDouble("rechargeTime");
+            float summonDuration = (float) abNode.getDouble("summonDuration");
             String mercenaryType = abNode.getString("mercenary");
             String mercenaryItems = abNode.getString("mercenaryItems");
             int mercenaryCount = abNode.getInt("mercenaryCount");

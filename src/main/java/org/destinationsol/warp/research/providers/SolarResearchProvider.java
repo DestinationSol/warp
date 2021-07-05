@@ -19,8 +19,7 @@ import org.destinationsol.Const;
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.SolSystem;
 import org.destinationsol.game.ship.SolShip;
-import org.destinationsol.warp.research.ResearchAction;
-import org.destinationsol.warp.research.ResearchProvider;
+import org.destinationsol.warp.research.actions.ResearchAction;
 import org.destinationsol.warp.research.actions.SolarResearchAction;
 
 import java.util.HashMap;
@@ -28,6 +27,10 @@ import java.util.Map;
 
 public class SolarResearchProvider implements ResearchProvider {
     private Map<SolSystem, ResearchAction> solarResearchMap = new HashMap<SolSystem, ResearchAction>();
+
+    public String getName() {
+        return "SolarResearchProvider";
+    }
 
     /**
      * Returns true if the provider is currently capable of doing research
@@ -93,5 +96,13 @@ public class SolarResearchProvider implements ResearchProvider {
     @Override
     public ResearchAction[] getDiscoveredActions() {
         return solarResearchMap.values().toArray(new ResearchAction[0]);
+    }
+
+    /**
+     * Resets the internal state of the research provider.
+     */
+    @Override
+    public void reset() {
+        solarResearchMap.clear();
     }
 }
