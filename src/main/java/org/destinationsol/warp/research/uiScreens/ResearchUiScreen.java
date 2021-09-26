@@ -25,6 +25,7 @@ import org.destinationsol.ui.SolInputManager;
 import org.destinationsol.ui.SolUiBaseScreen;
 import org.destinationsol.ui.SolUiControl;
 import org.destinationsol.ui.UiDrawer;
+import org.destinationsol.ui.nui.screens.MainGameScreen;
 import org.destinationsol.warp.research.actions.ResearchAction;
 import org.destinationsol.warp.research.providers.ResearchProvider;
 import org.destinationsol.warp.research.systems.ResearchSystem;
@@ -95,7 +96,9 @@ public class ResearchUiScreen extends SolUiBaseScreen {
         researchButtons.clear();
         populateResearchButtons();
 
-        sellResearchControl.setEnabled(solApplication.getGame().getScreens().mainGameScreen.talkControl.isEnabled()
+        sellResearchControl.setEnabled(((MainGameScreen) solApplication.getNuiManager().getScreens().stream()
+                .filter(screen -> screen instanceof MainGameScreen).findFirst().get())
+                .getTalkButton().isEnabled()
                 && (int) researchSystem.getResearchPoints() > 0 && !solApplication.getGame().getHero().isTranscendent());
 
         previousButton.setEnabled(actionsPage > 0);
