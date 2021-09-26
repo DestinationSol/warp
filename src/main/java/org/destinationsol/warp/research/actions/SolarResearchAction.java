@@ -16,16 +16,16 @@
 package org.destinationsol.warp.research.actions;
 
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.planet.SolSystem;
+import org.destinationsol.game.planet.SolarSystem;
 import org.destinationsol.game.ship.SolShip;
 
 public class SolarResearchAction implements ResearchAction {
     private static final float SOLAR_YIELD = 6.0f;
     private static final float RESEARCH_DISTANCE_RATE = 0.06f;
-    private final SolSystem solarSystem;
+    private final SolarSystem solarSystem;
     private float currentSolarYield;
 
-    public SolarResearchAction(SolSystem solarSystem) {
+    public SolarResearchAction(SolarSystem solarSystem) {
         this.solarSystem = solarSystem;
     }
 

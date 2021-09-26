@@ -17,6 +17,7 @@ package org.destinationsol.warp.research.providers;
 
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.SolarSystem;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.warp.research.actions.ResearchAction;
 import org.destinationsol.warp.research.actions.PlanetResearchAction;
@@ -64,7 +65,14 @@ public class PlanetResearchProvider implements ResearchProvider {
     public ResearchAction getAction(SolGame game, SolShip researchShip) {
         Planet nearestPlanet = game.getPlanetManager().getNearestPlanet(researchShip.getPosition());
         if (!planetResearchMap.containsKey(nearestPlanet)) {
-            planetResearchMap.put(nearestPlanet, new PlanetResearchAction(nearestPlanet));
+            String systemName = "<Unknown>";
+            for (SolarSystem system : game.getGalaxyBuilder().getBuiltSolarSystems()) {
+                if (system.getPlanets().contains(nearestPlanet)) {
+                    systemName = system.getName();
+                    break;
+                }
+            }
+            planetResearchMap.put(nearestPlanet, new PlanetResearchAction(nearestPlanet, systemName));
         }
         return planetResearchMap.get(nearestPlanet);
     }

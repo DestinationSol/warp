@@ -29,7 +29,7 @@ import org.destinationsol.game.attributes.RegisterUpdateSystem;
 import org.destinationsol.game.drawables.Drawable;
 import org.destinationsol.game.drawables.DrawableLevel;
 import org.destinationsol.game.drawables.RectSprite;
-import org.destinationsol.game.planet.SolSystem;
+import org.destinationsol.game.planet.SolarSystem;
 import org.destinationsol.game.planet.SunSingleton;
 import org.destinationsol.game.ship.ForceBeacon;
 import org.destinationsol.game.ship.SolShip;
@@ -94,7 +94,7 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
     private void spawnWormholes(SolGame game) {
         long seed = SolRandom.getSeed();
 
-        List<SolSystem> systems = game.getPlanetManager().getSystems();
+        List<SolarSystem> systems = game.getPlanetManager().getSystems();
 
         // TODO: Why is this here? Is it resetting the random number generator after generating
         // the wormholes to ensure consistency between warp-enabled and non-warp saves?
@@ -109,7 +109,7 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
             wormholeCount++;
         }
         int wormholesPerSystem = wormholeCount / systems.size();
-        for (SolSystem system : systems) {
+        for (SolarSystem system : systems) {
             for (int i = 0; i < wormholesPerSystem; i++) {
                 Vector2 position;
                 do {
@@ -249,7 +249,7 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
 
         public DistortionObject(Vector2 wormholePosition, Vector2 target, float stability) {
             this.wormholePosition = wormholePosition;
-            this.target = target;
+            this.target = new Vector2(target).add(0.2f, 0.2f);
             wormholeStability = stability;
             drawables.add(new RectSprite(wormholeTexture, 1, 0, 0, Vector2.Zero,
                     DrawableLevel.PART_FG_0, 0, 0, Color.WHITE, false));
@@ -263,6 +263,7 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
                     && approachingShip.getPosition().dst(wormholePosition) < 0.1f) {
                 // NOTE: Setting the same ship angle causes it to deviate until it reaches NaN and crashes.
                 approachingShip.getHull().getBody().setTransform(target, 0);
+                approachingShip.receiveForce(approachingShip.getVelocity().cpy().scl(10, 10), game, true);
             }
         }
 

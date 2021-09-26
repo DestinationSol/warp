@@ -15,18 +15,18 @@
  */
 package org.destinationsol.warp.research.providers;
 
-import org.destinationsol.Const;
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.planet.SolSystem;
+import org.destinationsol.game.planet.SolarSystem;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.warp.research.actions.ResearchAction;
 import org.destinationsol.warp.research.actions.SolarResearchAction;
+import org.destinationsol.world.generators.SolarSystemGenerator;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SolarResearchProvider implements ResearchProvider {
-    private Map<SolSystem, ResearchAction> solarResearchMap = new HashMap<SolSystem, ResearchAction>();
+    private Map<SolarSystem, ResearchAction> solarResearchMap = new HashMap<SolarSystem, ResearchAction>();
 
     public String getName() {
         return "SolarResearchProvider";
@@ -41,10 +41,10 @@ public class SolarResearchProvider implements ResearchProvider {
      */
     @Override
     public boolean canProvideResearch(SolGame game, SolShip researchShip) {
-        SolSystem nearestSystem = game.getPlanetManager().getNearestSystem(researchShip.getPosition());
+        SolarSystem nearestSystem = game.getPlanetManager().getNearestSystem(researchShip.getPosition());
         float sunDistance = nearestSystem.getPosition().dst(researchShip.getPosition());
 
-        boolean isNearToSun = (sunDistance < Const.SUN_RADIUS);
+        boolean isNearToSun = (sunDistance < SolarSystemGenerator.SUN_RADIUS);
 
         if (!isNearToSun) {
             return false;
@@ -70,7 +70,7 @@ public class SolarResearchProvider implements ResearchProvider {
             return null;
         }
 
-        SolSystem nearestSystem = game.getPlanetManager().getNearestSystem(researchShip.getPosition());
+        SolarSystem nearestSystem = game.getPlanetManager().getNearestSystem(researchShip.getPosition());
 
         ResearchAction researchAction;
 

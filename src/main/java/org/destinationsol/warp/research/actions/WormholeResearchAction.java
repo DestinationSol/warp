@@ -16,7 +16,7 @@
 package org.destinationsol.warp.research.actions;
 
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.planet.SolSystem;
+import org.destinationsol.game.planet.SolarSystem;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.warp.research.systems.WormholeDistortionProvider;
 
@@ -24,10 +24,10 @@ public class WormholeResearchAction implements ResearchAction {
     private static final float WORMHOLE_YIELD = 1.0f;
     private static final float MAX_WORMHOLE_YIELD = 10.0f;
     private WormholeDistortionProvider.DistortionObject distortionObject;
-    private SolSystem researchSystem;
+    private SolarSystem researchSystem;
     private float currentYield;
 
-    public WormholeResearchAction(WormholeDistortionProvider.DistortionObject distortionObject, SolSystem researchSystem) {
+    public WormholeResearchAction(WormholeDistortionProvider.DistortionObject distortionObject, SolarSystem researchSystem) {
         this.distortionObject = distortionObject;
         this.researchSystem = researchSystem;
     }

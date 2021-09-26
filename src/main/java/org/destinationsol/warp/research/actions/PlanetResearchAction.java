@@ -17,21 +17,24 @@ package org.destinationsol.warp.research.actions;
 
 import org.destinationsol.game.SolGame;
 import org.destinationsol.game.planet.Planet;
+import org.destinationsol.game.planet.SolarSystem;
 import org.destinationsol.game.ship.SolShip;
 
 public class PlanetResearchAction implements ResearchAction {
     private static final float DEFAULT_PLANET_YIELD = 0.5f;
     private static final float DEFAULT_PLANET_YIELD_MAX = 120;
     private final Planet planetToResearch;
+    private final String systemName;
     private float research;
 
-    public PlanetResearchAction(Planet planetToResearch) {
+    public PlanetResearchAction(Planet planetToResearch, String systemName) {
         this.planetToResearch = planetToResearch;
+        this.systemName = systemName;
     }
 
     @Override
     public float getMaxYield() {
-        return DEFAULT_PLANET_YIELD_MAX * (planetToResearch.getSystem().getConfig().hard ? 2 : 1);
+        return DEFAULT_PLANET_YIELD_MAX * (planetToResearch.getConfig().hardOnly ? 2 : 1);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class PlanetResearchAction implements ResearchAction {
         }
 
         if (planetToResearch.isNearGround(researchShip.getPosition())) {
-            float researchPoints = DEFAULT_PLANET_YIELD * (planetToResearch.getSystem().getConfig().hard ? 2 : 1) * game.getTimeStep();
+            float researchPoints = DEFAULT_PLANET_YIELD * (planetToResearch.getConfig().hardOnly ? 2 : 1) * game.getTimeStep();
             research += researchPoints;
             return researchPoints;
         }
@@ -66,7 +69,7 @@ public class PlanetResearchAction implements ResearchAction {
      */
     @Override
     public String getObjective() {
-        return "Study " + planetToResearch.getName() + " in " + planetToResearch.getSystem().getName() + " "
+        return "Study " + planetToResearch.getName() + " in " + systemName + " "
                 + Integer.toString((int) research) + "/" + Integer.toString((int) getMaxYield());
     }
 
@@ -77,7 +80,7 @@ public class PlanetResearchAction implements ResearchAction {
      */
     @Override
     public String getDescription() {
-        return "Land on " + planetToResearch.getName() + " in " + planetToResearch.getSystem().getName()
+        return "Land on " + planetToResearch.getName() + " in " + systemName
                 + " and explore. The research will automatically accumulate when near the planet's surface.";
     }
 }
