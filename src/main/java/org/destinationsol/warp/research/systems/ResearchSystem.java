@@ -22,20 +22,29 @@ import org.destinationsol.game.SolGame;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.attributes.RegisterUpdateSystem;
 import org.destinationsol.game.item.SolItem;
-import org.destinationsol.game.screens.MainGameScreen;
 import org.destinationsol.game.ship.SolShip;
+import org.destinationsol.ui.nui.NUIManager;
+import org.destinationsol.ui.nui.NUIScreenLayer;
+import org.destinationsol.ui.nui.screens.MainGameScreen;
+import org.destinationsol.ui.nui.widgets.UIWarnButton;
 import org.destinationsol.warp.research.actions.ResearchAction;
 import org.destinationsol.warp.research.providers.ResearchProvider;
 import org.destinationsol.warp.research.providers.PlanetResearchProvider;
 import org.destinationsol.warp.research.providers.SolarResearchProvider;
 import org.destinationsol.warp.research.providers.WormholeResearchProvider;
-import org.destinationsol.warp.research.uiScreens.ResearchOverlayUiScreen;
+import org.destinationsol.warp.research.uiScreens.ResearchUiScreen;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.terasology.input.Keyboard;
+import org.terasology.nui.UIWidget;
+import org.terasology.nui.layouts.ColumnLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RegisterUpdateSystem
 public class ResearchSystem implements UpdateAwareSystem {
+    private static final Logger logger = LoggerFactory.getLogger(ResearchSystem.class);
     private static float researchPoints;
     private static final String RESEARCH_POINT_ICON_PATH = "warp:researchPointIcon";
     private static final String[] DEFAULT_RESEARCH_SHIPS = new String[] {
@@ -50,7 +59,9 @@ public class ResearchSystem implements UpdateAwareSystem {
     private static final float RESEARCH_EXCHANGE_RATE = 4;
     private static List<String> researchShips;
     private static List<ResearchProvider> researchProviders;
-    private ResearchOverlayUiScreen researchOverlayUi;
+    private static boolean researchButtonPressed;
+    private ResearchUiScreen researchUiScreen;
+    private UIWarnButton researchButton;
 
     static {
         researchShips = new ArrayList<String>();
@@ -70,19 +81,17 @@ public class ResearchSystem implements UpdateAwareSystem {
             return;
         }
 
-        if (researchOverlayUi == null) {
-            researchOverlayUi = new ResearchOverlayUiScreen(this);
-        }
-
         SolApplication application = game.getSolApplication();
-        if (researchOverlayUi != null && application.getInputManager().getTopScreen() instanceof MainGameScreen
-            && !game.getScreens().mainGameScreen.hasOverlay(researchOverlayUi)) {
+        if (researchUiScreen == null) {
+            researchButtonPressed = false;
+            insertResearchButton(application);
+
             // Only show the research UI when flying a research-capable ship.
             // Don't check if the player is currently transcendent.
             if (!game.getHero().isTranscendent() && researchShips.contains(
                     game.getHero().getShip().getHull().getHullConfig().getInternalName())) {
                 // Either started a new game or continued an existing one.
-                game.getScreens().mainGameScreen.addOverlayScreen(researchOverlayUi);
+                researchUiScreen = new ResearchUiScreen(this);
 
                 game.getItemMan().parseItems("warp:researchCharge");
                 SolItem researchItem = game.getItemMan().getExample("warp:researchCharge");
@@ -95,17 +104,32 @@ public class ResearchSystem implements UpdateAwareSystem {
             }
         }
 
+        if (researchButtonPressed) {
+            boolean screenShown = application.getInputManager().isScreenOn(researchUiScreen);
+            if (screenShown) {
+                application.getInputManager().setScreen(application, application.getGame().getScreens().mainGameScreen);
+                researchButtonPressed = researchUiScreen.isClosing();
+            } else {
+                application.getInputManager().addScreen(application, researchUiScreen);
+                researchButtonPressed = false;
+            }
+        }
+
         Hero hero = game.getHero();
         if (!hero.isTranscendent() && researchShips.contains(hero.getShip().getHull().getHullConfig().getInternalName())) {
+            researchButton.setVisible(true);
             SolShip researchShip = hero.getShip();
             for (ResearchProvider provider : researchProviders) {
                 if (provider.canProvideResearch(game, researchShip)) {
                     ResearchAction action = provider.getAction(game, researchShip);
                     if (action != null) {
                         researchPoints += action.doResearch(game, researchShip);
+                        researchButton.enableWarn();
                     }
                 }
             }
+        } else {
+            researchButton.setVisible(false);
         }
     }
 
@@ -157,6 +181,43 @@ public class ResearchSystem implements UpdateAwareSystem {
     public void sellResearchPoints(Hero hero, float points) {
         researchPoints -= MathUtils.clamp(points, 0, researchPoints);
         hero.setMoney(hero.getMoney() + (points * RESEARCH_EXCHANGE_RATE));
+    }
+
+    private void insertResearchButton(SolApplication application) {
+        NUIManager nuiManager = application.getNuiManager();
+        if (nuiManager.hasScreenOfType(MainGameScreen.class)) {
+            for (NUIScreenLayer uiScreen : nuiManager.getScreens()) {
+                if (uiScreen instanceof MainGameScreen) {
+                    ColumnLayout menuItems;
+                    if (application.isMobile()) {
+                        menuItems = uiScreen.find("rightMenuList", ColumnLayout.class);
+                    } else {
+                        menuItems = uiScreen.find("menuList", ColumnLayout.class);
+                    }
+
+                    if (menuItems == null) {
+                        logger.error("Could not find NUI menu list for MainGameScreen! Has the UI layout changed?");
+                        break;
+                    }
+
+                    // Check for an existing button, since NUI screens are not currently unloaded until the game exits
+                    for (UIWidget menuItem : menuItems) {
+                        if (menuItem instanceof UIWarnButton && ((UIWarnButton)menuItem).getText().equals("Research")) {
+                            researchButton = (UIWarnButton) menuItem;
+                            return;
+                        }
+                    }
+
+                    researchButton = new UIWarnButton();
+                    // TODO: Don't hard-code the button key binding
+                    researchButton.setKey(Keyboard.Key.R);
+                    researchButton.setText("Research");
+                    researchButton.subscribe(button -> researchButtonPressed = true);
+                    menuItems.addWidget(researchButton);
+                    return;
+                }
+            }
+        }
     }
 
     private static void resetResearchProviders() {

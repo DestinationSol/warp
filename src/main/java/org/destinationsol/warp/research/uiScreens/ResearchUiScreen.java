@@ -15,6 +15,7 @@
  */
 package org.destinationsol.warp.research.uiScreens;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 import org.destinationsol.Const;
 import org.destinationsol.SolApplication;
@@ -46,6 +47,7 @@ public class ResearchUiScreen extends SolUiBaseScreen {
     private SolUiControl previousButton;
     private SolUiControl nextButton;
     private SolUiControl sellResearchControl;
+    private SolUiControl closeControl;
     private int actionsPage;
 
     public ResearchUiScreen(ResearchSystem researchSystem) {
@@ -80,6 +82,12 @@ public class ResearchUiScreen extends SolUiBaseScreen {
         nextButton.setDisplayName("Next");
         controls.add(nextButton);
 
+        // TODO: Stop hard-coding the escape key when the exception
+        //       "Denied access to class (not allowed with this module's permissions): org.destinationsol.GameOptions"
+        //       is fixed.
+        closeControl = new SolUiControl(null, false, Input.Keys.ESCAPE);
+        controls.add(closeControl);
+
         actionsPage = 0;
     }
 
@@ -89,7 +97,22 @@ public class ResearchUiScreen extends SolUiBaseScreen {
     }
 
     @Override
+    public boolean isCursorOnBackground(SolInputManager.InputPointer inputPointer) {
+        return background.contains(inputPointer.x, inputPointer.y);
+    }
+
+    @Override
     public void updateCustom(SolApplication solApplication, SolInputManager.InputPointer[] inputPointers, boolean clickedOutside) {
+        if (clickedOutside) {
+            closeControl.maybeFlashPressed(Input.Keys.ESCAPE);
+            return;
+        }
+
+        if (closeControl.isJustOff()) {
+            solApplication.getInputManager().setScreen(solApplication, solApplication.getGame().getScreens().mainGameScreen);
+            return;
+        }
+
         researchTextControl.setDisplayName("Research: " + Integer.toString((int) researchSystem.getResearchPoints()));
 
         researchButtons.values().forEach(buttons -> controls.removeAll(buttons));
@@ -117,6 +140,15 @@ public class ResearchUiScreen extends SolUiBaseScreen {
             Hero hero = solApplication.getGame().getHero();
             researchSystem.sellResearchPoints(hero, researchSystem.getResearchPoints());
         }
+    }
+
+    @Override
+    public boolean reactsToClickOutside() {
+        return true;
+    }
+
+    public boolean isClosing() {
+        return closeControl.isJustOff();
     }
 
     private Rectangle getButtonRectangle(float x, float y) {
