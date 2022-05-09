@@ -257,13 +257,30 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
 
         @Override
         public void update(SolGame game) {
-            SolShip approachingShip = ForceBeacon.pullShips(game, this, wormholePosition, null, null, ForceBeacon.MAX_PULL_DIST);
+            SolShip approachingShip = null;
+            float minShipDistance = Float.MAX_VALUE;
+            for (SolObject object : game.getObjectManager().getObjects()) {
+                if (object == this) {
+                    continue;
+                }
+                if (!(object instanceof SolShip)) {
+                    continue;
+                }
 
-            if (approachingShip != null && approachingShip.getHull().getHullConfig().getType() != HullConfig.Type.STATION
-                    && approachingShip.getPosition().dst(wormholePosition) < 0.1f) {
-                // NOTE: Setting the same ship angle causes it to deviate until it reaches NaN and crashes.
-                approachingShip.getHull().getBody().setTransform(target, 0);
-                approachingShip.receiveForce(approachingShip.getVelocity().cpy().scl(10, 10), game, true);
+                float distance = object.getPosition().dst(wormholePosition);
+                if (distance < ForceBeacon.MAX_PULL_DIST && distance < minShipDistance) {
+                    minShipDistance = distance;
+                    approachingShip = (SolShip) object;
+                }
+            };
+
+            if (approachingShip != null && approachingShip.getHull().getHullConfig().getType() != HullConfig.Type.STATION) {
+                ForceBeacon.pullShips(game, this, wormholePosition, null, null, ForceBeacon.MAX_PULL_DIST);
+                if (approachingShip.getPosition().dst(wormholePosition) < 0.1f) {
+                    // NOTE: Setting the same ship angle causes it to deviate until it reaches NaN and crashes.
+                    approachingShip.getHull().getBody().setTransform(target, 0);
+                    approachingShip.receiveForce(approachingShip.getVelocity().cpy().scl(10, 10), game, true);
+                }
             }
         }
 
