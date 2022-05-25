@@ -39,6 +39,7 @@ import org.terasology.input.Keyboard;
 import org.terasology.nui.UIWidget;
 import org.terasology.nui.layouts.ColumnLayout;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,10 @@ public class ResearchSystem implements UpdateAwareSystem {
         for (ResearchProvider provider : DEFAULT_RESEARCH_PROVIDERS) {
             addResearchProvider(provider);
         }
+    }
+
+    @Inject
+    public ResearchSystem() {
     }
 
     @Override

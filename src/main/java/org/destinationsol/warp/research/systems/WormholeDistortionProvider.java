@@ -36,6 +36,7 @@ import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
 import org.destinationsol.warp.research.warnDrawers.WormholeWarnDrawer;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
     private final TextureAtlas.AtlasRegion wormholeTexture;
     private final WormholeWarnDrawer wormholeWarnDrawer;
 
+    @Inject
     public WormholeDistortionProvider() {
         wormholeTexture = Assets.getAtlasRegion(WORMHOLE_TEXTURE_PATH);
         wormholeWarnDrawer = new WormholeWarnDrawer();
