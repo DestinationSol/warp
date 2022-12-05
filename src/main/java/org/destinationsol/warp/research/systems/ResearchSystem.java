@@ -112,7 +112,7 @@ public class ResearchSystem implements UpdateAwareSystem {
         if (researchButtonPressed) {
             boolean screenShown = application.getInputManager().isScreenOn(researchUiScreen);
             if (screenShown) {
-                application.getInputManager().setScreen(application, application.getGame().getScreens().mainGameScreen);
+                application.getNuiManager().setScreen(application.getGame().getScreens().mainGameScreen);
                 researchButtonPressed = researchUiScreen.isClosing();
             } else {
                 application.getInputManager().addScreen(application, researchUiScreen);

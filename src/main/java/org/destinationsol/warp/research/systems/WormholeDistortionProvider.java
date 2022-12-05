@@ -35,6 +35,7 @@ import org.destinationsol.game.ship.ForceBeacon;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
 import org.destinationsol.warp.research.warnDrawers.WormholeWarnDrawer;
+import org.terasology.nui.UITextureRegion;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -50,17 +51,18 @@ public class WormholeDistortionProvider implements UpdateAwareSystem {
     private static List<Wormhole> wormholes = new ArrayList<Wormhole>();
     private static List<DistortionObject> wormholeObjects = new ArrayList<DistortionObject>();
     private final TextureAtlas.AtlasRegion wormholeTexture;
-    private final WormholeWarnDrawer wormholeWarnDrawer;
+    private WormholeWarnDrawer wormholeWarnDrawer;
 
     @Inject
     public WormholeDistortionProvider() {
         wormholeTexture = Assets.getAtlasRegion(WORMHOLE_TEXTURE_PATH);
-        wormholeWarnDrawer = new WormholeWarnDrawer();
     }
 
     @Override
     public void update(SolGame game, float timeStep) {
-        if (!game.getScreens().mainGameScreen.hasWarnDrawer(wormholeWarnDrawer)) {
+        if (!game.getScreens().mainGameScreen.hasWarnDrawer("wormholeWarnDrawer")) {
+            UITextureRegion whiteTexture = Assets.getDSTexture("engine:uiWhiteTex").getUiTexture();
+            wormholeWarnDrawer = new WormholeWarnDrawer(game, whiteTexture);
             game.getScreens().mainGameScreen.addWarnDrawer(wormholeWarnDrawer);
         }
 

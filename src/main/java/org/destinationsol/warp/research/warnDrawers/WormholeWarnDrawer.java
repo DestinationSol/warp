@@ -15,28 +15,32 @@
  */
 package org.destinationsol.warp.research.warnDrawers;
 
-import com.badlogic.gdx.graphics.Color;
 import org.destinationsol.game.SolGame;
-import org.destinationsol.game.screens.WarnDrawer;
+import org.destinationsol.ui.nui.widgets.UIWarnDrawer;
 import org.destinationsol.warp.research.systems.WormholeDistortionProvider;
+import org.terasology.nui.Color;
+import org.terasology.nui.UITextureRegion;
+import org.terasology.nui.databinding.ReadOnlyBinding;
+import org.terasology.nui.widgets.UILabel;
 
-public class WormholeWarnDrawer extends WarnDrawer {
+public class WormholeWarnDrawer extends UIWarnDrawer {
     private static final float WARN_UPDATE_INTERVAL = 0.5f;
     private float warnUpdateTimer = WARN_UPDATE_INTERVAL;
 
-    public WormholeWarnDrawer() {
-        super("Distortion Near", Color.ORANGE);
-    }
-
-    @Override
-    protected boolean shouldWarn(SolGame game) {
-        warnUpdateTimer -= game.getTimeStep();
-        if (warnUpdateTimer <= 0) {
-            warnUpdateTimer = WARN_UPDATE_INTERVAL;
-            return WormholeDistortionProvider.getWormholeObjects().stream().anyMatch(
-                element -> element.getPosition().dst(game.getHero().getPosition()) < 5.0f);
-        } else {
-            return false;
-        }
+    public WormholeWarnDrawer(SolGame game, UITextureRegion background) {
+        super("wormholeWarnDrawer", background, new Color(0xffa500ff), new UILabel("Distortion Near"));
+        this.bindWarn(new ReadOnlyBinding<Boolean>() {
+            @Override
+            public Boolean get() {
+                warnUpdateTimer -= game.getTimeStep();
+                if (warnUpdateTimer <= 0) {
+                    warnUpdateTimer = WARN_UPDATE_INTERVAL;
+                    return WormholeDistortionProvider.getWormholeObjects().stream().anyMatch(
+                            element -> element.getPosition().dst(game.getHero().getPosition()) < 5.0f);
+                } else {
+                    return false;
+                }
+            }
+        });
     }
 }
