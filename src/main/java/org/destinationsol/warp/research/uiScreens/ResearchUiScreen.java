@@ -110,6 +110,7 @@ public class ResearchUiScreen extends SolUiBaseScreen {
 
         if (closeControl.isJustOff()) {
             solApplication.getNuiManager().setScreen(solApplication.getGame().getScreens().mainGameScreen);
+            solApplication.getInputManager().setScreen(solApplication, solApplication.getGame().getScreens().oldMainGameScreen);
             return;
         }
 

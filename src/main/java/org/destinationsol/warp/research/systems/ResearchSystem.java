@@ -60,7 +60,6 @@ public class ResearchSystem implements UpdateAwareSystem {
     private static final float RESEARCH_EXCHANGE_RATE = 4;
     private static List<String> researchShips;
     private static List<ResearchProvider> researchProviders;
-    private static boolean researchButtonPressed;
     private ResearchUiScreen researchUiScreen;
     private UIWarnButton researchButton;
 
@@ -88,7 +87,6 @@ public class ResearchSystem implements UpdateAwareSystem {
 
         SolApplication application = game.getSolApplication();
         if (researchUiScreen == null) {
-            researchButtonPressed = false;
             insertResearchButton(application);
 
             // Only show the research UI when flying a research-capable ship.
@@ -106,17 +104,6 @@ public class ResearchSystem implements UpdateAwareSystem {
                     researchPoints = 0;
                     resetResearchProviders();
                 }
-            }
-        }
-
-        if (researchButtonPressed) {
-            boolean screenShown = application.getInputManager().isScreenOn(researchUiScreen);
-            if (screenShown) {
-                application.getNuiManager().setScreen(application.getGame().getScreens().mainGameScreen);
-                researchButtonPressed = researchUiScreen.isClosing();
-            } else {
-                application.getInputManager().addScreen(application, researchUiScreen);
-                researchButtonPressed = false;
             }
         }
 
@@ -217,7 +204,18 @@ public class ResearchSystem implements UpdateAwareSystem {
                     // TODO: Don't hard-code the button key binding
                     researchButton.setKey(Keyboard.Key.R);
                     researchButton.setText("Research");
-                    researchButton.subscribe(button -> researchButtonPressed = true);
+                    researchButton.subscribe(button -> {
+                        if (researchUiScreen == null) {
+                            return;
+                        }
+                        application.getNuiManager().setScreen(application.getGame().getScreens().mainGameScreen);
+                        boolean screenShown = application.getInputManager().isScreenOn(researchUiScreen);
+                        if (screenShown) {
+                            application.getInputManager().setScreen(application, application.getGame().getScreens().oldMainGameScreen);
+                        } else {
+                            application.getInputManager().addScreen(application, researchUiScreen);
+                        }
+                    });
                     menuItems.addWidget(researchButton);
                     return;
                 }
