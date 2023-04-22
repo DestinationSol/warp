@@ -1,5 +1,6 @@
 {
     "WarpShieldAbility": {
+        "icon": "warp:warpShieldIcon",
         "effect": {
             "effectFile": "core:areaShipAbility",
             "tex": "core:sloMo",
@@ -9,6 +10,7 @@
         "activatedSound": "core:sloMoActivated"
     },
     "PlanetTunnelAbility": {
+        "icon": "warp:planetTunnelIcon",
         "effect": {
             "effectFile": "core:areaShipAbility",
             "tex": "core:sloMo",
@@ -18,6 +20,7 @@
         "activatedSound": "core:sloMoActivated"
     },
     "SummonMercenariesAbility": {
+        "icon": "warp:explorerIcon",
         "effect": {
             "effectFile": "core:areaShipAbility",
             "tex": "core:sloMo",
